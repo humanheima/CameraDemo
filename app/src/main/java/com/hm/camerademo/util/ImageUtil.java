@@ -1,18 +1,21 @@
 package com.hm.camerademo.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.hm.camerademo.App;
 
 import java.io.ByteArrayInputStream;
@@ -21,7 +24,7 @@ import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Field;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -41,6 +44,13 @@ public class ImageUtil {
     }
 
     private static DisplayMetrics displayMetrics = App.getInstance().getResources().getDisplayMetrics();
+
+    public static void load(Context context, String url, ImageView imageView) {
+        Glide.with(context)
+                .load(url)
+                .dontAnimate()
+                .into(imageView);
+    }
 
     /**
      * 创建图片File对象
@@ -77,19 +87,63 @@ public class ImageUtil {
         return BitmapFactory.decodeResource(res, resId, options);
     }
 
+    /**
+     * 通过imgPath获取图片并采样压缩，降低bitmap 占用的内存
+     *
+     * @param imgPath 图片地址
+     * @return The decoded bitmap, or null
+     */
     public static Bitmap getBitmapFromPath(String imgPath) {
-        // First decode with inJustDecodeBounds=true to check dimensions
         int reqWidth = 480;
         int reqHeight = 800;
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(imgPath, options);
 
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeFile(imgPath, options);
+    }
+
+    /**
+     * 通过uri获取图片并采样压缩，降低bitmap 占用的内存
+     *
+     * @param uri 图片uri
+     * @return The decoded bitmap, or null
+     */
+    public static Bitmap getBitmapFormUri(Activity ac, Uri uri) throws IOException {
+        InputStream input = ac.getContentResolver().openInputStream(uri);
+        if (input == null) {
+            return null;
+        } else {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(input, null, options);
+            input.close();
+            int originalWidth = options.outWidth;
+            int originalHeight = options.outHeight;
+            if ((originalWidth == -1) || (originalHeight == -1))
+                return null;
+            options.inSampleSize = calculateInSampleSize(options, 480, 800);//设置缩放比例
+            options.inJustDecodeBounds = false;
+            input = ac.getContentResolver().openInputStream(uri);
+            Bitmap bitmap = BitmapFactory.decodeStream(input, null, options);
+            if (input != null) {
+                input.close();
+            }
+            return bitmap;
+        }
+    }
+
+    public static Bitmap decodeSampledBitmapFromFileDescriptor(FileDescriptor fd, int reqWidth, int reqHeight) {
+
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFileDescriptor(fd, null, options);
         // Calculate inSampleSize
         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
         options.inJustDecodeBounds = false;
-        //return compressImage(BitmapFactory.decodeFile(imgPath, options));
-        return BitmapFactory.decodeFile(imgPath, options);
+        return BitmapFactory.decodeFileDescriptor(fd, null, options);
     }
 
     public static Observable<String> observableSaveImageToExternal(final Context context, final Bitmap cropBitmap) {
@@ -103,6 +157,64 @@ public class ImageUtil {
     }
 
     /**
+     * 读取图片的旋转的角度
+     *
+     * @param path 图片绝对路径
+     * @return 图片的旋转角度
+     */
+    public static int getBitmapDegree(String path) {
+        int degree = 0;
+        try {
+            // 从指定路径下读取图片，并获取其EXIF信息
+            ExifInterface exifInterface = new ExifInterface(path);
+            // 获取图片的旋转信息
+            int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_NORMAL);
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    degree = 90;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    degree = 180;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    degree = 270;
+                    break;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return degree;
+    }
+
+    /**
+     * 将图片按照某个角度进行旋转
+     *
+     * @param bm     需要旋转的图片
+     * @param degree 旋转角度
+     * @return 旋转后的图片
+     */
+    public static Bitmap rotateBitmapByDegree(Bitmap bm, int degree) {
+        Bitmap returnBm = null;
+        // 根据旋转角度，生成旋转矩阵
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degree);
+        try {
+            // 将原始图片按照旋转矩阵进行旋转，并得到新的图片
+            returnBm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), matrix, true);
+        } catch (OutOfMemoryError e) {
+            Log.e("rotateBitmapByDegree", "恭喜你 OOM了");
+        }
+        if (returnBm == null) {
+            returnBm = bm;
+        }
+        if (bm != returnBm) {
+            bm.recycle();
+        }
+        return returnBm;
+    }
+
+    /**
      * 保存图片到本地
      *
      * @param bm
@@ -112,7 +224,7 @@ public class ImageUtil {
         try {
             File imageFile = createImageFile();
             FileOutputStream out = new FileOutputStream(imageFile);
-            bm.compress(Bitmap.CompressFormat.PNG, 100, out);
+            bm.compress(Bitmap.CompressFormat.JPEG, 80, out);
             out.flush();
             out.close();
             //TODO 还不能马上刷新
@@ -135,16 +247,13 @@ public class ImageUtil {
         return null;
     }
 
-    // TODO: 2017/2/8 这个方法有问题
-
     /**
-     * 质量压缩方法
+     * 质量压缩方法,并不能减小图片在内存中的占用大小，只能改变以文件形式存储时的文件大小
      *
      * @param image
      * @return
      */
     public static Bitmap compressImage(Bitmap image) {
-
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         image.compress(Bitmap.CompressFormat.JPEG, 100, baos);//质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
         int options = 100;
@@ -159,21 +268,10 @@ public class ImageUtil {
         return bitmap;
     }
 
-    public static Bitmap decodeSampledBitmapFromFileDescriptor(FileDescriptor fd, int reqWidth, int reqHeight) {
-
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFileDescriptor(fd, null, options);
-        // Calculate inSampleSize
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-        options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeFileDescriptor(fd, null, options);
-    }
-
     /**
-     * @param options
-     * @param reqWidth
-     * @param reqHeight
+     * @param options   options
+     * @param reqWidth  目标宽度
+     * @param reqHeight 目标高度
      * @return inSampleSize 指示了在解析图片为Bitmap时在长宽两个方向上像素缩小的倍数
      */
     private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
@@ -195,120 +293,5 @@ public class ImageUtil {
         }
         return inSampleSize;
     }
-
-
-    /**
-     * 返回图片的尺寸
-     *
-     * @param imageView
-     * @return
-     */
-    public static RequestImageSize getImageViewSize(ImageView imageView) {
-
-        RequestImageSize requestImageSize = new RequestImageSize();
-        ViewGroup.LayoutParams lp = imageView.getLayoutParams();
-        int width = imageView.getWidth();// 获取imageview的实际宽度
-        if (width <= 0) {
-            width = lp.width;// 获取imageview在layout中声明的宽度
-        }
-        if (width <= 0) {
-            width = getImageViewFieldValue(imageView, "mMaxWidth");
-        }
-        if (width <= 0) {
-            width = displayMetrics.widthPixels;
-        }
-
-        int height = imageView.getHeight();// 获取imageview的实际高度
-        if (height <= 0) {
-            height = lp.height;// 获取imageview在layout中声明的宽度
-        }
-        if (height <= 0) {
-            height = getImageViewFieldValue(imageView, "mMaxHeight");// 检查最大值
-        }
-        if (height <= 0) {
-            height = displayMetrics.heightPixels;
-        }
-        requestImageSize.width = width;
-        requestImageSize.height = height;
-        return requestImageSize;
-    }
-
-    /**
-     * 使用反射获取 imageView 的最大宽度或者高度
-     *
-     * @param imageView
-     * @param mMaxField
-     * @return imageView 的最大宽度或者高度
-     */
-    private static int getImageViewFieldValue(ImageView imageView, String mMaxField) {
-        int requestField = 0;
-        try {
-            Field field = ImageView.class.getDeclaredField(mMaxField);
-            field.setAccessible(true);//设置是否允许访问，因为该变量是private的，所以要手动设置允许访问，如果msg是public的就不需要这行了。
-            requestField = field.getInt(imageView);
-        } catch (NoSuchFieldException e) {
-            Log.e("getImageViewFieldValue", "NoSuchFieldException:" + e.getMessage());
-        } catch (IllegalAccessException e) {
-            Log.e("getImageViewFieldValue", "IllegalAccessException:" + e.getMessage());
-        }
-        Log.e("getImageViewFieldValue", "requestField=" + requestField);
-        return requestField;
-    }
-
-    public static class RequestImageSize {
-        public int width;
-        public int height;
-
-        public int getWidth() {
-            return width;
-        }
-
-        public void setWidth(int width) {
-            this.width = width;
-        }
-
-        public int getHeight() {
-            return height;
-        }
-
-        public void setHeight(int height) {
-            this.height = height;
-        }
-    }
-
-    public static Bitmap getBitMapFromLocal(String path) {
-        Bitmap bitmap = BitmapFactory.decodeFile(path);
-        return bitmap;
-    }
-
-    public static Bitmap compressBitMap(String path) {
-        return compressBitMap(getBitMapFromLocal(path));
-    }
-
-    public static Bitmap compressBitMap(Bitmap bitmap) {
-        Log.e("compressBitMap", "bitmap size=" + bitmap.getByteCount());
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 60, bos);
-        Log.e("compressBitMap", "bos size=" + bos.size());
-        ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
-        Log.e("compressBitMap", "bis size=" + bis.available());
-
-        return bitmap;
-    }
-
-    public static void writeImage(Bitmap bitmap) {
-        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + File.separator + "dest.png";
-        File file = new File(path);
-        FileOutputStream fos;
-        try {
-            fos = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
-            fos.flush();
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
 
 }
