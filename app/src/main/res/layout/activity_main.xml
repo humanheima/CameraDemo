@@ -29,10 +29,10 @@
             android:text="本地选取图片" />
 
         <Button
-            android:id="@+id/btn_compress_bitmap"
+            android:id="@+id/btn_save_bitmap"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="拍照后压缩图片" />
+            android:text="把imageView上的bitmap保存到本地" />
 
         <Button
             android:id="@+id/btn_compress_photo"

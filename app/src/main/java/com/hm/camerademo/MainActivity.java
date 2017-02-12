@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -17,6 +18,7 @@ import com.hm.camerademo.network.NetWork;
 import com.hm.camerademo.util.ImageUtil;
 
 import java.io.File;
+import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     Button btnTakePhoto;
     @BindView(R.id.btn_choose_photo)
     Button btnChoosePhoto;
-    @BindView(R.id.btn_compress_bitmap)
+    @BindView(R.id.btn_save_bitmap)
     Button btnCompressBitmap;
     @BindView(R.id.btn_compress_photo)
     Button btnCompressPhoto;
@@ -55,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
     }
 
-    @OnClick({R.id.btn_take_photo, R.id.btn_choose_photo, R.id.btn_compress_bitmap, R.id.btn_compress_photo})
+    @OnClick({R.id.btn_take_photo, R.id.btn_choose_photo, R.id.btn_save_bitmap, R.id.btn_compress_photo})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_take_photo:
@@ -64,7 +66,8 @@ public class MainActivity extends AppCompatActivity {
             case R.id.btn_choose_photo:
                 chooseFromAlbum();
                 break;
-            case R.id.btn_compress_bitmap:
+            case R.id.btn_save_bitmap:
+                saveBitmap();
                 break;
             case R.id.btn_compress_photo:
                 break;
@@ -89,13 +92,34 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(intent, CHOOSE_FROM_ALBUM);
     }
 
+    /**
+     * 把imageView上的bitmap保存到本地
+     */
+    private void saveBitmap() {
+        String destination = null;
+        imgPreview.setDrawingCacheEnabled(true);
+        Bitmap bitmap = imgPreview.getDrawingCache();
+        try {
+            destination = ImageUtil.compressImage(MainActivity.this, bitmap, 70);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (TextUtils.isEmpty(destination)) {
+            Toast.makeText(MainActivity.this, "保存失败", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(MainActivity.this, "压缩成功", Toast.LENGTH_SHORT).show();
+        }
+        imgPreview.setDrawingCacheEnabled(false);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case TAKE_PHOTO:
                 if (resultCode == RESULT_OK) {
-                    processTakePhoto();
+                    // processTakePhoto();
+                    processTakePhoto(photoURI.getPath());
                 }
                 break;
             case CHOOSE_FROM_ALBUM:
@@ -178,6 +202,43 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * 处理拍照后的图片
+     */
+    private void processTakePhoto(final String imgPath) {
+        //图片被旋转,则旋转为正常角度并保存
+        Observable.just(imgPath)
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
+                .map(new Func1<String, String>() {
+                    @Override
+                    public String call(String s) {
+                        try {
+                            //返回压缩的图片的路径，要记得上传完成后，把这个压缩的图片给删除了。
+                            return ImageUtil.compressImage(MainActivity.this, imgPath, 70);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String imgPath) {
+                        ImageUtil.load(MainActivity.this, imgPath, imgPreview);
+                        Toast.makeText(MainActivity.this, "压缩成功", Toast.LENGTH_SHORT).show();
+                        // TODO: 2017/2/10 在这里上传图片
+                        //uploadAvatar(imgPath);
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        Toast.makeText(MainActivity.this, "压缩失败" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    /**
      * 从相册选取后展示，压缩上传
      *
      * @param picturePath
@@ -226,7 +287,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * 上传头像
+     * 上传头像,删除压缩后的图片
      *
      * @param imgPath
      */
@@ -244,14 +305,19 @@ public class MainActivity extends AppCompatActivity {
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<String>() {
-                               @Override
-                               public void call(String s) {
-                               }
-                           }
-                        , new Action1<Throwable>() {
-                            @Override
-                            public void call(Throwable throwable) {
-                            }
-                        });
+                    @Override
+                    public void call(String s) {
+                        //上传成功，删除压缩图片
+                        File deleteFile = new File(imgPath);
+                        if (deleteFile.exists()) {
+                            deleteFile.delete();
+                        }
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+
+                    }
+                });
     }
 }

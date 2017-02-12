@@ -11,7 +11,6 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -22,6 +21,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileDescriptor;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,7 +32,7 @@ import rx.Observable;
 import rx.Subscriber;
 
 /**
- * Created by Administrator on 2017/1/5.
+ * Created by dumingwei on 2017/1/5.
  * 质量压缩不能用bitmap的形式进行压缩
  * 质量压缩不改变图片占用内存的大小
  * 拍照后，或者从本地选取图片后，应该使用采样压缩
@@ -42,8 +42,6 @@ public class ImageUtil {
 
     public ImageUtil() {
     }
-
-    private static DisplayMetrics displayMetrics = App.getInstance().getResources().getDisplayMetrics();
 
     public static void load(Context context, String url, ImageView imageView) {
         Glide.with(context)
@@ -146,15 +144,110 @@ public class ImageUtil {
         return BitmapFactory.decodeFileDescriptor(fd, null, options);
     }
 
-    public static Observable<String> observableSaveImageToExternal(final Context context, final Bitmap cropBitmap) {
-        return Observable.create(new Observable.OnSubscribe<String>() {
-            @Override
-            public void call(Subscriber<? super String> subscriber) {
-                subscriber.onNext(saveImageToExternal(context, cropBitmap));
-                subscriber.onCompleted();
+    /**
+     * @param options   options
+     * @param reqWidth  目标宽度
+     * @param reqHeight 目标高度
+     * @return inSampleSize 指示了在解析图片为Bitmap时在长宽两个方向上像素缩小的倍数
+     */
+    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) >= reqHeight
+                    && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
             }
-        });
+        }
+        return inSampleSize;
     }
+
+    /**
+     * 质量压缩方法,并不能减小图片在内存中的占用大小，只能改变以文件形式存储时的文件大小
+     *
+     * @param image
+     * @return
+     */
+    public static Bitmap compressImage(Bitmap image) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 100, baos);//质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
+        int options = 100;
+        while (baos.toByteArray().length / 1024 > 200) {  //循环判断如果压缩后图片是否大于200kb,大于继续压缩
+            baos.reset();//重置baos即清空baos
+            //第一个参数 ：图片格式 ，第二个参数： 图片质量，100为最高，0为最差  ，第三个参数：保存压缩后的数据的流
+            image.compress(Bitmap.CompressFormat.JPEG, options, baos);//这里压缩options%，把压缩后的数据存放到baos中
+            options -= 10;//每次都减少10
+        }
+        ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());//把压缩后的数据baos存放到ByteArrayInputStream中
+        Bitmap bitmap = BitmapFactory.decodeStream(isBm, null, null);//把ByteArrayInputStream数据生成图片
+        return bitmap;
+    }
+
+    /**
+     * 压缩图片处理某些手机拍照角度旋转的问题。
+     *
+     * @param context  上下文对象
+     * @param filePath 图片地址
+     * @param quantity 压缩质量
+     * @return
+     * @throws FileNotFoundException
+     */
+    public static String compressImage(Context context, String filePath, int quantity) throws IOException {
+        Bitmap bitmap = getBitmapFromPath(filePath);
+        int degree = getBitmapDegree(filePath);
+        if (degree != 0) {
+            bitmap = rotateBitmapByDegree(bitmap, degree);
+        }
+        File imageFile = createImageFile();
+        FileOutputStream out = new FileOutputStream(imageFile);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, quantity, out);
+        out.flush();
+        out.close();
+        //TODO 还不能马上刷新
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            Uri contentUri = Uri.fromFile(imageFile);
+            mediaScanIntent.setData(contentUri);
+            context.sendBroadcast(mediaScanIntent);
+        } else {
+            context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + imageFile.getAbsoluteFile())));
+        }
+        return imageFile.getPath();
+    }
+
+    /**
+     * @param context  上下文对象
+     * @param bitmap   要存在
+     * @param quantity 压缩质量
+     * @return
+     * @throws FileNotFoundException
+     */
+    public static String compressImage(Context context, Bitmap bitmap, int quantity) throws IOException {
+        File imageFile = createImageFile();
+        FileOutputStream out = new FileOutputStream(imageFile);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, quantity, out);
+        out.flush();
+        out.close();
+        //TODO 还不能马上刷新
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            Uri contentUri = Uri.fromFile(imageFile);
+            mediaScanIntent.setData(contentUri);
+            context.sendBroadcast(mediaScanIntent);
+        } else {
+            context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + imageFile.getAbsoluteFile())));
+        }
+        return imageFile.getPath();
+    }
+
 
     /**
      * 读取图片的旋转的角度
@@ -214,6 +307,16 @@ public class ImageUtil {
         return returnBm;
     }
 
+    public static Observable<String> observableSaveImageToExternal(final Context context, final Bitmap cropBitmap) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                subscriber.onNext(saveImageToExternal(context, cropBitmap));
+                subscriber.onCompleted();
+            }
+        });
+    }
+
     /**
      * 保存图片到本地
      *
@@ -245,53 +348,6 @@ public class ImageUtil {
             e.printStackTrace();
         }
         return null;
-    }
-
-    /**
-     * 质量压缩方法,并不能减小图片在内存中的占用大小，只能改变以文件形式存储时的文件大小
-     *
-     * @param image
-     * @return
-     */
-    public static Bitmap compressImage(Bitmap image) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.JPEG, 100, baos);//质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
-        int options = 100;
-        while (baos.toByteArray().length / 1024 > 200) {  //循环判断如果压缩后图片是否大于200kb,大于继续压缩
-            baos.reset();//重置baos即清空baos
-            //第一个参数 ：图片格式 ，第二个参数： 图片质量，100为最高，0为最差  ，第三个参数：保存压缩后的数据的流
-            image.compress(Bitmap.CompressFormat.JPEG, options, baos);//这里压缩options%，把压缩后的数据存放到baos中
-            options -= 10;//每次都减少10
-        }
-        ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());//把压缩后的数据baos存放到ByteArrayInputStream中
-        Bitmap bitmap = BitmapFactory.decodeStream(isBm, null, null);//把ByteArrayInputStream数据生成图片
-        return bitmap;
-    }
-
-    /**
-     * @param options   options
-     * @param reqWidth  目标宽度
-     * @param reqHeight 目标高度
-     * @return inSampleSize 指示了在解析图片为Bitmap时在长宽两个方向上像素缩小的倍数
-     */
-    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
-
-        // Raw height and width of image
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
-
-        if (height > reqHeight || width > reqWidth) {
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-            // height and width larger than the requested height and width.
-            while ((halfHeight / inSampleSize) >= reqHeight
-                    && (halfWidth / inSampleSize) >= reqWidth) {
-                inSampleSize *= 2;
-            }
-        }
-        return inSampleSize;
     }
 
 }
