@@ -1,4 +1,4 @@
-package com.hm.camerademo;
+package com.hm.camerademo.ui.activity;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.hm.camerademo.R;
 import com.hm.camerademo.network.HttpResult;
 import com.hm.camerademo.network.NetWork;
 import com.hm.camerademo.util.ImageUtil;
@@ -44,8 +45,8 @@ public class MainActivity extends AppCompatActivity {
     Button btnChoosePhoto;
     @BindView(R.id.btn_save_bitmap)
     Button btnCompressBitmap;
-    @BindView(R.id.btn_compress_photo)
-    Button btnCompressPhoto;
+    @BindView(R.id.btn_choose_multi_photo)
+    Button btnChooseMultiPhoto;
     private Uri photoURI;
     //拍照图片旋转角度
     private int photoDegree = 0;
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
     }
 
-    @OnClick({R.id.btn_take_photo, R.id.btn_choose_photo, R.id.btn_save_bitmap, R.id.btn_compress_photo})
+    @OnClick({R.id.btn_take_photo, R.id.btn_choose_photo, R.id.btn_save_bitmap, R.id.btn_choose_multi_photo})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_take_photo:
@@ -69,7 +70,8 @@ public class MainActivity extends AppCompatActivity {
             case R.id.btn_save_bitmap:
                 saveBitmap();
                 break;
-            case R.id.btn_compress_photo:
+            case R.id.btn_choose_multi_photo:
+                MultiPhotoActivity.launch(MainActivity.this);
                 break;
         }
     }

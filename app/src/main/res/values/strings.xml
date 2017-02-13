@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">CameraDemo</string>
+    <string name="total_number_of_image">所有图片 %d张</string>
+    <string name="max_image_size">最多添加%d张图片</string>
 </resources>
