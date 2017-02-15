@@ -60,7 +60,6 @@ public class ImageUtil {
         Glide.with(context)
                 .load(new File(url))
                 .error(R.mipmap.ic_launcher)
-                .dontAnimate()
                 .into(imageView);
     }
 

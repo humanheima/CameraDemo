@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -21,6 +22,7 @@ import com.hm.camerademo.util.localImages.LocalImagesUri;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,9 +33,12 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
-
+/**
+ *
+ */
 public class PictureSelectActivity extends AppCompatActivity {
 
+    private final String TAG = getClass().getSimpleName();
     public static final String IMAGE_LIST = "image_list";
     public static final String IMAGE_MAX_NUM = "image_max_num";
 
@@ -48,12 +53,11 @@ public class PictureSelectActivity extends AppCompatActivity {
     @BindView(R.id.text_max_image_size)
     TextView textMaxImageSize;
 
-    private List<String> imageList;
+    private List<String> imageList;//前一个界面已经选中的图片的地址
     private int maxImageNum;//图片选择的最大数量
-    private int selectCount;
-    private List<Boolean> isSelected;
-    private List<ImageItem> imageLocal;
-    private List<String> imageNotShow; //当前界面未显示且已经选择到的图片
+    private int selectCount;//前一个界面已经选择的数量
+    private List<ImageItem> imageLocal;//本地所有的图片
+    private List<String> imageNotShow;
     private PictureSelectAdapter adapter;
 
     public static void launch(Activity context, List<String> list, int maxNum) {
@@ -70,7 +74,6 @@ public class PictureSelectActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         imageList = (List<String>) getIntent().getSerializableExtra(IMAGE_LIST);
         maxImageNum = getIntent().getIntExtra(IMAGE_MAX_NUM, 0);
-        isSelected = new ArrayList<>();
         imageNotShow = new ArrayList<>();
         textDefault.setText("/".concat(String.valueOf(maxImageNum).concat("张")));
         selectCount = imageList.size();
@@ -86,57 +89,60 @@ public class PictureSelectActivity extends AppCompatActivity {
                 .subscribe(new Action1<List<ImageItem>>() {
                     @Override
                     public void call(List<ImageItem> imageItems) {
-                        textMaxImageSize.setText(String.format("所有图片 %d张", imageItems.size()));
-                        //统计当前界面未显示且已经选择到的图片
+                        textMaxImageSize.setText(String.format(Locale.CHINA, "所有图片 %d张", imageItems.size()));
+                        //统计前一个界面显示的非本地的图片(比如从网络上加载的图片)
                         if (!ListUtil.isEmpty(imageList)) {
                             for (String path : imageList) {
-                                boolean haveImage = false;
+                                boolean isLocalImage = false;
                                 for (ImageItem imageItem : imageLocal) {
                                     if (imageItem.getImagePath().equals(path)) {
-                                        haveImage = true;
+                                        isLocalImage = true;
                                         break;
                                     }
                                 }
-                                if (!haveImage) {
+                                if (!isLocalImage) {
                                     imageNotShow.add(path);
                                 }
                             }
                         }
-                        //统计选中与未选中
-                        for (int i = 0; i < imageLocal.size(); i++) {
-                            ImageItem imageItem = imageLocal.get(i);
-                            isSelected.add(false);
-                            if (!ListUtil.isEmpty(imageList)) {
-                                for (String imagePath : imageList) {
-                                    if (imagePath.equals(imageItem.getImagePath())) {
-                                        isSelected.set(i, true);
+                        //统计前一个界面显示本地的图片
+                        if (!ListUtil.isEmpty(imageList)) {
+                            for (String imagePath : imageList) {
+                                for (int i = 0; i < imageLocal.size(); i++) {
+                                    ImageItem item = imageLocal.get(i);
+                                    if (imagePath.equals(item.getImagePath())) {
+                                        item.setSelected(true);
+                                        imageLocal.set(i, item);
                                         break;
                                     }
                                 }
                             }
                         }
+
                         textNumber.setText(String.valueOf(selectCount));
                         GridLayoutManager gridLayoutManager = new GridLayoutManager(PictureSelectActivity.this, 3);
                         gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
                         recyclerView.setLayoutManager(gridLayoutManager);
-                        adapter = new PictureSelectAdapter(imageLocal, isSelected);
+                        adapter = new PictureSelectAdapter(imageLocal);
                         recyclerView.setAdapter(adapter);
                         adapter.setOnItemClickListener(new OnItemClickListener() {
                             @Override
                             public void onItemClick(View view, int position) {
                                 //图片数目已经达到maxImageCount
-                                if (selectCount >= maxImageNum && !isSelected.get(position)) {
+                                ImageItem item = imageLocal.get(position);
+                                if (selectCount >= maxImageNum && !item.isSelected()) {
                                     Toast.makeText(PictureSelectActivity.this,
                                             String.format(getString(R.string.max_image_size), maxImageNum),
                                             Toast.LENGTH_SHORT).show();
                                     return;
                                 }
-                                if (isSelected.get(position)) {
+                                if (item.isSelected()) {
                                     selectCount--;
                                 } else {
                                     selectCount++;
                                 }
-                                isSelected.set(position, !isSelected.get(position));
+                                item.setSelected(!item.isSelected());
+                                imageLocal.set(position, item);
                                 textNumber.setText(String.valueOf(selectCount));
                                 adapter.notifyItemChanged(position);
                             }
@@ -145,7 +151,7 @@ public class PictureSelectActivity extends AppCompatActivity {
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-
+                        Log.e(TAG, "get Local Images error:" + throwable.getMessage());
                     }
                 });
 
@@ -159,7 +165,7 @@ public class PictureSelectActivity extends AppCompatActivity {
         }
         for (int i = 0; i < imageLocal.size(); i++) {
             ImageItem imageItem = imageLocal.get(i);
-            if (isSelected.get(i)) {
+            if (imageItem.isSelected()) {
                 images.add(imageItem.getImagePath());
             }
         }

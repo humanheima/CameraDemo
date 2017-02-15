@@ -9,7 +9,8 @@ public class ImageItem {
     private String id;
     private String orientation;
     private String imagePath;
-    private String thumnbailPath;
+    private String thumbnailPath;
+    private boolean selected;
 
     public String getId() {
         return id;
@@ -35,11 +36,19 @@ public class ImageItem {
         this.orientation = orientation;
     }
 
-    public String getThumnbailPath() {
-        return thumnbailPath;
+    public String getThumbnailPath() {
+        return thumbnailPath;
     }
 
-    public void setThumnbailPath(String thumnbailPath) {
-        this.thumnbailPath = thumnbailPath;
+    public void setThumbnailPath(String thumbnailPath) {
+        this.thumbnailPath = thumbnailPath;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 }

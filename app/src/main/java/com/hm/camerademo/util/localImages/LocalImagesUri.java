@@ -12,8 +12,8 @@ import java.util.List;
 public class LocalImagesUri {
 
     private static ImagesHelper mImagesHelper;
-    private static List<ImageBucket> mImageBucket = new ArrayList<ImageBucket>();
-    private static List<ImageItem> mImageItem = new ArrayList<ImageItem>();
+    private static List<ImageBucket> mImageBucket = new ArrayList<>();
+    private static List<ImageItem> mImageItem = new ArrayList<>();
 
     public static List<ImageItem> getLocalImagesUri(Context context) {
         mImagesHelper = ImagesHelper.getHelper();

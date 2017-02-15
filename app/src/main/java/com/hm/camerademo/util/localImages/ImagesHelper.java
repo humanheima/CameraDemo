@@ -167,7 +167,7 @@ public class ImagesHelper {
                 ImageItem imageItem = new ImageItem();
                 imageItem.setId(_id);
                 imageItem.setImagePath(path);
-                imageItem.setThumnbailPath(thumbnailList.get(_id));
+                imageItem.setThumbnailPath(thumbnailList.get(_id));
                 bucket.imageList.add(imageItem);
 
             } while (cur.moveToNext());

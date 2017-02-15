@@ -26,16 +26,14 @@ public class PictureSelectAdapter extends RecyclerView.Adapter<PictureSelectAdap
 
     private Context context;
     private List<ImageItem> imageLocal;
-    private List<Boolean> isSelect;
     private OnItemClickListener onItemClickListener;
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }
 
-    public PictureSelectAdapter(List<ImageItem> imageLocal, List<Boolean> isSelect) {
+    public PictureSelectAdapter(List<ImageItem> imageLocal) {
         this.imageLocal = imageLocal;
-        this.isSelect = isSelect;
     }
 
     @Override
@@ -47,7 +45,7 @@ public class PictureSelectAdapter extends RecyclerView.Adapter<PictureSelectAdap
 
     @Override
     public void onBindViewHolder(final PictureSelectHolder holder, int position) {
-
+        ImageItem item = imageLocal.get(position);
         if (onItemClickListener != null) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -56,14 +54,14 @@ public class PictureSelectAdapter extends RecyclerView.Adapter<PictureSelectAdap
                 }
             });
         }
-        if (isSelect.get(position)) {
+        if (item.isSelected()) {
             holder.imgSelected.setImageResource(R.drawable.ic_pictures_selected);
             holder.imgLocal.setColorFilter(SELECTED_COLOR_FILTER);
         } else {
             holder.imgSelected.setImageResource(R.drawable.ic_picture_unselected);
             holder.imgLocal.setColorFilter(null);
         }
-        ImageUtil.loadLocalFile(context, holder.imgLocal, imageLocal.get(position).getImagePath());
+        ImageUtil.loadLocalFile(context, holder.imgLocal, item.getImagePath());
     }
 
     @Override
