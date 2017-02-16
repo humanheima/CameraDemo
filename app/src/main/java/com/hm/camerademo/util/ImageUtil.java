@@ -11,11 +11,13 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.hm.camerademo.App;
+import com.hm.camerademo.R;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -49,6 +51,18 @@ public class ImageUtil {
                 .dontAnimate()
                 .into(imageView);
     }
+
+    public static void loadLocalFile(Context context, ImageView imageView, String url) {
+        if (TextUtils.isEmpty(url)) {
+            imageView.setImageResource(R.mipmap.ic_launcher);
+            return;
+        }
+        Glide.with(context)
+                .load(new File(url))
+                .error(R.mipmap.ic_launcher)
+                .into(imageView);
+    }
+
 
     /**
      * 创建图片File对象

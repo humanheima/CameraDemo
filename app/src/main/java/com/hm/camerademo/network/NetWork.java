@@ -10,10 +10,6 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
-/**
- * Created by shucc on 17/1/22.
- * cc@cchao.org
- */
 public class NetWork {
 
     private static Api api;

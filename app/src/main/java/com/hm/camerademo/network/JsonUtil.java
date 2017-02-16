@@ -7,10 +7,6 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.Map;
 
-/**
- * Created by shucc on 17/1/18.
- * cc@cchao.org
- */
 public class JsonUtil {
 
     private static Gson gson = new Gson();
