@@ -1,16 +1,12 @@
 package com.hm.camerademo.util.localImages;
 
-/**
- * Created by chenchao on 16/12/12.
- * cc@cchao.org
- */
 public class ImageItem {
 
     private String id;
     private String orientation;
     private String imagePath;
     private String thumbnailPath;
-    private boolean selected;
+    private boolean selected = false;
 
     public String getId() {
         return id;

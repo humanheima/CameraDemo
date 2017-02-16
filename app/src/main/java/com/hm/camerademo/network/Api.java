@@ -9,10 +9,6 @@ import retrofit2.http.POST;
 import retrofit2.http.Part;
 import rx.Observable;
 
-/**
- * Created by shucc on 17/1/22.
- * cc@cchao.org
- */
 public interface Api {
 
     @POST("index.php")

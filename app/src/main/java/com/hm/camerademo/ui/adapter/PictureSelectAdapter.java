@@ -38,7 +38,9 @@ public class PictureSelectAdapter extends RecyclerView.Adapter<PictureSelectAdap
 
     @Override
     public PictureSelectHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        context = parent.getContext();
+        if (context==null){
+            context = parent.getContext();
+        }
         View convertView = LayoutInflater.from(context).inflate(R.layout.item_picture_select, parent, false);
         return new PictureSelectHolder(convertView);
     }

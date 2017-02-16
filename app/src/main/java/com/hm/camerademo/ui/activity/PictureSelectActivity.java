@@ -17,7 +17,7 @@ import com.hm.camerademo.listener.OnItemClickListener;
 import com.hm.camerademo.ui.adapter.PictureSelectAdapter;
 import com.hm.camerademo.util.ListUtil;
 import com.hm.camerademo.util.localImages.ImageItem;
-import com.hm.camerademo.util.localImages.LocalImagesUri;
+import com.hm.camerademo.util.localImages.LocalImagesUtil;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -33,9 +33,6 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
-/**
- *
- */
 public class PictureSelectActivity extends AppCompatActivity {
 
     private final String TAG = getClass().getSimpleName();
@@ -77,11 +74,11 @@ public class PictureSelectActivity extends AppCompatActivity {
         imageNotShow = new ArrayList<>();
         textDefault.setText("/".concat(String.valueOf(maxImageNum).concat("张")));
         selectCount = imageList.size();
+        imageLocal = new ArrayList<>();
         Observable.create(new Observable.OnSubscribe<List<ImageItem>>() {
             @Override
             public void call(Subscriber<? super List<ImageItem>> subscriber) {
-                imageLocal = LocalImagesUri.getLocalImagesUri(PictureSelectActivity.this);
-                subscriber.onNext(imageLocal);
+                subscriber.onNext(LocalImagesUtil.getInstance(PictureSelectActivity.this).getLocalImagesUri());
                 subscriber.onCompleted();
             }
         }).subscribeOn(Schedulers.io())
@@ -89,7 +86,9 @@ public class PictureSelectActivity extends AppCompatActivity {
                 .subscribe(new Action1<List<ImageItem>>() {
                     @Override
                     public void call(List<ImageItem> imageItems) {
-                        textMaxImageSize.setText(String.format(Locale.CHINA, "所有图片 %d张", imageItems.size()));
+                        imageLocal.clear();
+                        imageLocal.addAll(imageItems);
+                        textMaxImageSize.setText(String.format(Locale.CHINA, "所有图片 %d张", imageLocal.size()));
                         //统计前一个界面显示的非本地的图片(比如从网络上加载的图片)
                         if (!ListUtil.isEmpty(imageList)) {
                             for (String path : imageList) {
@@ -105,7 +104,6 @@ public class PictureSelectActivity extends AppCompatActivity {
                                 }
                             }
                         }
-                        //统计前一个界面显示本地的图片
                         if (!ListUtil.isEmpty(imageList)) {
                             for (String imagePath : imageList) {
                                 for (int i = 0; i < imageLocal.size(); i++) {
@@ -118,7 +116,6 @@ public class PictureSelectActivity extends AppCompatActivity {
                                 }
                             }
                         }
-
                         textNumber.setText(String.valueOf(selectCount));
                         GridLayoutManager gridLayoutManager = new GridLayoutManager(PictureSelectActivity.this, 3);
                         gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
@@ -173,5 +170,11 @@ public class PictureSelectActivity extends AppCompatActivity {
         intent.putExtra(IMAGE_LIST, (Serializable) images);
         setResult(MultiPhotoActivity.CHOOSE_MULTI_IMAGE_OK, intent);
         finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
     }
 }

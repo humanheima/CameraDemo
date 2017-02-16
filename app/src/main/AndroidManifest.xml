@@ -23,7 +23,7 @@
         </activity>
         <activity android:name=".ui.activity.MultiPhotoActivity" />
         <activity android:name=".ui.activity.PictureSelectActivity" />
-        <activity android:name=".ui.activity.PicturePreviewActivity"></activity>
+        <activity android:name=".ui.activity.PicturePreviewActivity"/>
     </application>
 
 </manifest>
