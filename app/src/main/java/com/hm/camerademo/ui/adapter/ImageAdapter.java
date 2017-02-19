@@ -4,7 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
 import com.hm.camerademo.R;
@@ -12,20 +12,23 @@ import com.hm.camerademo.util.ImageUtil;
 
 import java.util.List;
 
-public class ImageAdapter extends BaseAdapter {
+public class ImageAdapter extends ArrayAdapter<String> {
 
     public static final int IMG_MAX_NUM = 9;//最多9张图片
-
-    private List<String> stringList;
     private Context context;
+    private int resource;
+    private List<String> stringList;
     private OnAddImageListener onAddImageListener;
 
     public void setOnAddImageListener(OnAddImageListener onAddImageListener) {
         this.onAddImageListener = onAddImageListener;
     }
 
-    public ImageAdapter(List<String> stringList) {
-        this.stringList = stringList;
+    public ImageAdapter(Context context, int resource, List<String> objects) {
+        super(context, resource, objects);
+        this.context = context;
+        this.resource = resource;
+        this.stringList = objects;
     }
 
     @Override
@@ -38,23 +41,13 @@ public class ImageAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int position) {
-        return null;
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         if (context == null) {
             context = parent.getContext();
         }
         final OutDetailHolder holder;
         if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.item_in_detail, parent, false);
+            convertView = LayoutInflater.from(context).inflate(resource, parent, false);
             holder = new OutDetailHolder();
             holder.imageView = (ImageView) convertView.findViewById(R.id.item_img_book);
             holder.imageViewAdd = (ImageView) convertView.findViewById(R.id.item_add_img);

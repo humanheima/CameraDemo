@@ -40,7 +40,7 @@ public class MultiPhotoActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         imagesList = new ArrayList<>();
 
-        adapter = new ImageAdapter(imagesList);
+        adapter = new ImageAdapter(this, R.layout.item_in_detail, imagesList);
         adapter.setOnAddImageListener(new ImageAdapter.OnAddImageListener() {
             @Override
             public void openSelect(View view) {

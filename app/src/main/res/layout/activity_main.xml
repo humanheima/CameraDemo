@@ -34,23 +34,23 @@
             android:layout_height="wrap_content"
             android:text="把imageView上的bitmap保存到本地" />
 
-     <!--   <Button
-            android:id="@+id/btn_compress_photo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="从本地选取图片并压缩" />
-
-        <Button
-            android:id="@+id/btn_preview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="图片预览" />-->
-
         <Button
             android:id="@+id/btn_choose_multi_photo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="从本地选取多张图片" />
+
+        <Button
+            android:id="@+id/btn_xiaanming"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="启动xiaanmingActivity" />
+
+        <Button
+            android:id="@+id/btn_final"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="开源图片选择器" />
     </LinearLayout>
 
 

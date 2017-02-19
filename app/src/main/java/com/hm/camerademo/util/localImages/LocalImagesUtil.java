@@ -75,7 +75,7 @@ public class LocalImagesUtil {
             int picasaIdIndex = cur.getColumnIndexOrThrow(MediaStore.Images.Media.PICASA_ID);
             int totalNum = cur.getCount();
 
-            do {
+            while (cur.moveToNext()) {
                 String _id = cur.getString(photoIDIndex);
                 String name = cur.getString(photoNameIndex);
                 String path = cur.getString(photoPathIndex);
@@ -87,7 +87,6 @@ public class LocalImagesUtil {
 
                 ImageBucket bucket = bucketList.get(bucketId);
                 if (bucket == null) {
-                    Log.e("buildImagesBucketList", "buck==" + bucket);
                     bucket = new ImageBucket();
                     bucketList.put(bucketId, bucket);
                     bucket.imageList = new ArrayList<>();
@@ -99,8 +98,7 @@ public class LocalImagesUtil {
                 imageItem.setImagePath(path);
                 imageItem.setThumbnailPath(thumbnailList.get(_id));
                 bucket.imageList.add(imageItem);
-
-            } while (cur.moveToNext());
+            }
         }
     }
 
@@ -121,14 +119,13 @@ public class LocalImagesUtil {
             int image_idColumn = cur.getColumnIndex(MediaStore.Images.Thumbnails.IMAGE_ID);
             int dataColumn = cur.getColumnIndex(MediaStore.Images.Thumbnails.DATA);
 
-            do {
+            while (cur.moveToNext()) {
                 // Get the field values
                 _id = cur.getInt(_idColumn);
                 image_id = cur.getInt(image_idColumn);
                 image_path = cur.getString(dataColumn);
-
                 thumbnailList.put("" + image_id, image_path);
-            } while (cur.moveToNext());
+            }
         }
     }
 
@@ -157,7 +154,7 @@ public class LocalImagesUtil {
             int artistColumn = cur.getColumnIndex(MediaStore.Audio.Albums.ARTIST);
             int numOfSongsColumn = cur.getColumnIndex(MediaStore.Audio.Albums.NUMBER_OF_SONGS);
 
-            do {
+            while (cur.moveToNext()) {
                 // Get the field values
                 _id = cur.getInt(_idColumn);
                 album = cur.getString(albumColumn);
@@ -174,9 +171,7 @@ public class LocalImagesUtil {
                 hash.put("artist", artist);
                 hash.put("numOfSongs", numOfSongs + "");
                 albumList.add(hash);
-
-            } while (cur.moveToNext());
-
+            }
         }
     }
 }

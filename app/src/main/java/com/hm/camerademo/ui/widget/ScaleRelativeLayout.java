@@ -24,7 +24,6 @@ public class ScaleRelativeLayout extends RelativeLayout {
         setMeasuredDimension(getDefaultSize(0, widthMeasureSpec),
                 getDefaultSize(0, heightMeasureSpec));
         int childWidthSize = getMeasuredWidth();
-        int childHeightSize = getMeasuredHeight();
         // 高度和宽度一样
         widthMeasureSpec = MeasureSpec.makeMeasureSpec(childWidthSize,
                 MeasureSpec.EXACTLY);
