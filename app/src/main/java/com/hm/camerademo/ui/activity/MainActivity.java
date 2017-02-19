@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
     }
 
-    @OnClick({R.id.btn_take_photo, R.id.btn_choose_photo, R.id.btn_save_bitmap, R.id.btn_choose_multi_photo})
+    @OnClick({R.id.btn_take_photo, R.id.btn_choose_photo, R.id.btn_save_bitmap, R.id.btn_choose_multi_photo, R.id.btn_xiaanming, R.id.btn_final})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_take_photo:
@@ -72,6 +72,14 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.btn_choose_multi_photo:
                 MultiPhotoActivity.launch(MainActivity.this);
+                break;
+            case R.id.btn_xiaanming:
+                XAActivity.launch(MainActivity.this);
+                break;
+            case R.id.btn_final:
+                RxGalleryActivity.launch(MainActivity.this);
+                break;
+            default:
                 break;
         }
     }
