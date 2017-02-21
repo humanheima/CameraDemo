@@ -71,15 +71,18 @@ public class ImageUtil {
      */
     public static File createImageFile() {
         File imageFile = null;
+        String storagePath;
+        File storageDir;
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         try {
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
-                path.mkdirs();
-                imageFile = File.createTempFile(timeStamp, ".jpg", path);
+                storagePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath() + File.separator + "camerademo";
             } else {
-                imageFile = File.createTempFile(timeStamp, ".jpg", App.getInstance().getExternalFilesDir(null));
+                storagePath = App.getInstance().getExternalCacheDir().getAbsolutePath() + File.separator + "images";
             }
+            storageDir = new File(storagePath);
+            storageDir.mkdirs();
+            imageFile = File.createTempFile(timeStamp, ".jpg", storageDir);
         } catch (IOException e) {
             e.printStackTrace();
         }
