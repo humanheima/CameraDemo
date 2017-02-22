@@ -1,13 +1,22 @@
 package com.hm.camerademo.ui.activity;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -16,7 +25,9 @@ import android.widget.Toast;
 import com.hm.camerademo.R;
 import com.hm.camerademo.network.HttpResult;
 import com.hm.camerademo.network.NetWork;
+import com.hm.camerademo.ui.fragment.MyDialog;
 import com.hm.camerademo.util.ImageUtil;
+import com.hm.camerademo.util.SpUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,7 +46,9 @@ import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
+    private final String TAG = getClass().getSimpleName();
     private static final int TAKE_PHOTO = 1000;
+    public static final int REQUEST_TAKE_PHOTO_PERMISSION = 1001;
     public static final int CHOOSE_FROM_ALBUM = 1004;
     @BindView(R.id.img_preview)
     ImageView imgPreview;
@@ -47,9 +60,11 @@ public class MainActivity extends AppCompatActivity {
     Button btnCompressBitmap;
     @BindView(R.id.btn_choose_multi_photo)
     Button btnChooseMultiPhoto;
-    private Uri photoURI;
     //拍照图片旋转角度
     private int photoDegree = 0;
+    private File photoFile;
+    private Uri photoURI;
+    private MyDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_take_photo:
-                takePhoto();
+                takePhotoRequestPermission();
                 break;
             case R.id.btn_choose_photo:
                 chooseFromAlbum();
@@ -84,12 +99,69 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void takePhotoRequestPermission() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                if (!SpUtil.getInstance().getNotAskAgain()) {
+                    if (dialog == null) {
+                        dialog = MyDialog.newInstance("提示", "需要读写数据权限");
+                        dialog.setOnAllowClickListener(new MyDialog.OnAllowClickListener() {
+                            @Override
+                            public void onClick() {
+                                startAppSetting();
+                            }
+                        });
+                    }
+                    dialog.show(getSupportFragmentManager(), "dialog");
+                } else {
+                    Toast.makeText(this, "请设置权限后再使用", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Log.e(TAG, "takePhotoRequestPermission shouldShowRequestPermissionRationale==false");
+                //直接申请权限
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        REQUEST_TAKE_PHOTO_PERMISSION);
+            }
+        } else {
+            takePhoto();
+        }
+    }
+
+    public void startAppSetting() {
+        Intent in = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", getPackageName(), null);
+        in.setData(uri);
+        startActivityForResult(in, REQUEST_TAKE_PHOTO_PERMISSION);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_TAKE_PHOTO_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                takePhoto();
+            } else {
+                Toast.makeText(this, "CAMERA PERMISSION DENIED", Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
     private void takePhoto() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            File photoFile = ImageUtil.createImageFile();
+            photoFile = ImageUtil.createImageFile();
             if (photoFile != null) {
-                photoURI = Uri.fromFile(photoFile);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    Log.e(TAG, "Build.VERSION.SDK_INT >= Build.VERSION_CODES.N");
+                    photoURI = FileProvider.getUriForFile(this, "com.hm.camerademo.fileprovider", photoFile);
+                    takePictureIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    takePictureIntent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                } else {
+                    photoURI = Uri.fromFile(photoFile);
+                }
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, TAKE_PHOTO);
             }
@@ -129,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
             case TAKE_PHOTO:
                 if (resultCode == RESULT_OK) {
                     // processTakePhoto();
-                    processTakePhoto(photoURI.getPath());
+                    processTakePhoto(photoFile.getPath());
                 }
                 break;
             case CHOOSE_FROM_ALBUM:
@@ -146,6 +218,15 @@ public class MainActivity extends AppCompatActivity {
                         imgPath = data.getData().getPath();
                     }
                     processChoosePicture(imgPath);
+                }
+                break;
+            case REQUEST_TAKE_PHOTO_PERMISSION:
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                    takePhoto();
+                } else {
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            REQUEST_TAKE_PHOTO_PERMISSION);
                 }
                 break;
             default:

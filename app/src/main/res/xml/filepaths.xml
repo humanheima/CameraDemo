@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <external-path
+        name="camerademo_public_img"
+        path="DCIM/camerademo" />
+    <cache-path
+        name="camerademo_private_img"
+        path="images" />
+</paths>
