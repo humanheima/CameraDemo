@@ -39,4 +39,5 @@ public class SpUtil {
     public boolean getFlag() {
         return hmSpref.getBoolean(FLAG, false);
     }
+
 }
