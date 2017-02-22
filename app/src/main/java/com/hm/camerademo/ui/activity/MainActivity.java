@@ -101,11 +101,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void takePhotoRequestPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            //直接申请权限
             if (SpUtil.getInstance().getFlag() &&
                     !ActivityCompat.shouldShowRequestPermissionRationale(this,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 if (dialog == null) {
-                    dialog = MyDialog.newInstance("提示", "需要读写数据权限");
+                    dialog = MyDialog.newInstance("相机故障", "需要开启读写数据权限才可以使用拍照功能");
                     dialog.setOnAllowClickListener(new MyDialog.OnAllowClickListener() {
                         @Override
                         public void onClick() {
