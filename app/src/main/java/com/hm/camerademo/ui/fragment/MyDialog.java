@@ -14,6 +14,8 @@ import android.widget.TextView;
 import com.hm.camerademo.R;
 import com.hm.camerademo.util.SpUtil;
 
+import retrofit2.http.HEAD;
+
 /**
  * Created by dumingwei on 2017/2/21.
  */
@@ -23,20 +25,15 @@ public class MyDialog extends DialogFragment {
     private static final String CONTENT = "content";
     private TextView textTitle;
     private TextView textContent;
-    private CheckBox checkBoxAskAgain;
     private Button btnDeny;
     private Button btnAllow;
 
     private String title;
     private String content;
-
-    private boolean notAskAgain = false;//不再询问
-
     private OnAllowClickListener onAllowClickListener;
 
     public MyDialog() {
     }
-
 
     public static MyDialog newInstance(String title, String content) {
         MyDialog dialog = new MyDialog();
@@ -60,7 +57,6 @@ public class MyDialog extends DialogFragment {
         }
     }
 
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -69,26 +65,18 @@ public class MyDialog extends DialogFragment {
         textContent = (TextView) view.findViewById(R.id.text_content);
         textTitle.setText(title);
         textContent.setText(content);
-        checkBoxAskAgain = (CheckBox) view.findViewById(R.id.checkbox_ask_again);
         btnDeny = (Button) view.findViewById(R.id.btn_deny);
         btnAllow = (Button) view.findViewById(R.id.btn_allow);
-        checkBoxAskAgain.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                notAskAgain = isChecked;
-            }
-        });
         btnDeny.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SpUtil.getInstance().putNotAskAgain(notAskAgain);
                 dismiss();
             }
         });
         btnAllow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //这时候应该提示用户去应用里面设置权限
+                //这时候应该让用户去应用里面设置权限
                 dismiss();
                 if (onAllowClickListener != null) {
                     onAllowClickListener.onClick();

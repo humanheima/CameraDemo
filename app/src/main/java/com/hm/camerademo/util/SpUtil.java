@@ -13,7 +13,7 @@ public class SpUtil {
     private static SharedPreferences hmSpref;
     private static SharedPreferences.Editor editor;
     private static SpUtil spUtil;
-    private final String NOT_ASK_AGAIN = "not_ask_again";
+    private final String FLAG = "flag";
 
     private SpUtil() {
         hmSpref = App.getInstance().getSharedPreferences("hmSpref", Context.MODE_PRIVATE);
@@ -31,12 +31,13 @@ public class SpUtil {
         return spUtil;
     }
 
-    public void putNotAskAgain(boolean notAskAgain) {
-        editor.putBoolean(NOT_ASK_AGAIN, notAskAgain);
+    public void putFlag(boolean flag) {
+        editor.putBoolean(FLAG, flag);
         editor.commit();
     }
 
-    public boolean getNotAskAgain() {
-        return hmSpref.getBoolean(NOT_ASK_AGAIN, false);
+    public boolean getFlag() {
+        return hmSpref.getBoolean(FLAG, false);
     }
+
 }

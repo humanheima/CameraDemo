@@ -38,6 +38,7 @@ import butterknife.OnClick;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import retrofit2.http.HEAD;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -100,24 +101,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void takePhotoRequestPermission() {
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                if (!SpUtil.getInstance().getNotAskAgain()) {
-                    if (dialog == null) {
-                        dialog = MyDialog.newInstance("提示", "需要读写数据权限");
-                        dialog.setOnAllowClickListener(new MyDialog.OnAllowClickListener() {
-                            @Override
-                            public void onClick() {
-                                startAppSetting();
-                            }
-                        });
-                    }
-                    dialog.show(getSupportFragmentManager(), "dialog");
-                } else {
-                    Toast.makeText(this, "请设置权限后再使用", Toast.LENGTH_SHORT).show();
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            //直接申请权限
+            if (SpUtil.getInstance().getFlag() &&
+                    !ActivityCompat.shouldShowRequestPermissionRationale(this,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                if (dialog == null) {
+                    dialog = MyDialog.newInstance("相机故障", "需要开启读写数据权限才可以使用拍照功能");
+                    dialog.setOnAllowClickListener(new MyDialog.OnAllowClickListener() {
+                        @Override
+                        public void onClick() {
+                            startAppSetting();
+                        }
+                    });
                 }
+                dialog.show(getSupportFragmentManager(), "dialog");
             } else {
+                SpUtil.getInstance().putFlag(ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE));
                 Log.e(TAG, "takePhotoRequestPermission shouldShowRequestPermissionRationale==false");
                 //直接申请权限
                 ActivityCompat.requestPermissions(this,
@@ -200,7 +201,6 @@ public class MainActivity extends AppCompatActivity {
         switch (requestCode) {
             case TAKE_PHOTO:
                 if (resultCode == RESULT_OK) {
-                    // processTakePhoto();
                     processTakePhoto(photoFile.getPath());
                 }
                 break;
@@ -221,13 +221,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case REQUEST_TAKE_PHOTO_PERMISSION:
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    takePhoto();
-                } else {
-                    ActivityCompat.requestPermissions(this,
-                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                            REQUEST_TAKE_PHOTO_PERMISSION);
-                }
+                takePhotoRequestPermission();
                 break;
             default:
                 break;

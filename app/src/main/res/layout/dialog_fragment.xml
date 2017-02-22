@@ -5,6 +5,16 @@
     android:orientation="vertical">
 
     <TextView
+<<<<<<< HEAD
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"
+        android:id="@+id/text_title"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:gravity="left"
+        android:textColor="@color/colorAccent"
+        android:textSize="20sp" />
+=======
         android:id="@+id/text_title"
         android:layout_width="match_parent"
         android:layout_height="32dp"
@@ -12,10 +22,17 @@
         android:textColor="@color/colorAccent"
         android:textSize="16sp"
         android:visibility="gone" />
+>>>>>>> ac361829873aeeea63f43ec1217804402b7c5599
 
     <TextView
         android:id="@+id/text_content"
         android:layout_width="match_parent"
+<<<<<<< HEAD
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:textColor="@color/colorAccent"
+        android:textSize="16sp" />
+=======
         android:layout_height="32dp"
         android:layout_marginTop="16dp"
         android:gravity="center"
@@ -42,6 +59,7 @@
             android:textSize="14sp" />
     </LinearLayout>
 
+>>>>>>> ac361829873aeeea63f43ec1217804402b7c5599
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -56,7 +74,11 @@
             android:layout_marginRight="24dp"
             android:layout_toLeftOf="@+id/btn_allow"
             android:background="@android:color/transparent"
+<<<<<<< HEAD
+            android:text="cancel" />
+=======
             android:text="deny" />
+>>>>>>> ac361829873aeeea63f43ec1217804402b7c5599
 
         <Button
             android:id="@+id/btn_allow"
@@ -65,7 +87,11 @@
             android:layout_alignParentRight="true"
             android:layout_marginRight="24dp"
             android:background="@android:color/transparent"
+<<<<<<< HEAD
+            android:text="go setting" />
+=======
             android:text="allow" />
+>>>>>>> ac361829873aeeea63f43ec1217804402b7c5599
     </RelativeLayout>
 
 </LinearLayout>
