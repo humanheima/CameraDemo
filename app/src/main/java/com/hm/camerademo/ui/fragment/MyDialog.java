@@ -7,9 +7,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.hm.camerademo.R;
+import com.hm.camerademo.util.SpUtil;
+
+import retrofit2.http.HEAD;
 
 /**
  * Created by dumingwei on 2017/2/21.
@@ -25,7 +30,6 @@ public class MyDialog extends DialogFragment {
 
     private String title;
     private String content;
-
     private OnAllowClickListener onAllowClickListener;
 
     public MyDialog() {
