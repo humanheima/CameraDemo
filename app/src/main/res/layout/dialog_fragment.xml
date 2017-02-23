@@ -5,15 +5,16 @@
     android:orientation="vertical">
 
     <TextView
-        android:layout_marginTop="16dp"
-        android:layout_marginLeft="16dp"
         android:id="@+id/text_title"
         android:layout_width="match_parent"
         android:layout_height="32dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
         android:gravity="left"
         android:textColor="@color/colorAccent"
         android:textSize="20sp" />
- <TextView
+
+    <TextView
         android:id="@+id/text_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,7 +22,8 @@
         android:textColor="@color/colorAccent"
         android:textSize="16sp" />
 
- <RelativeLayout
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginBottom="16dp"
@@ -44,6 +46,6 @@
             android:layout_marginRight="24dp"
             android:background="@android:color/transparent"
             android:text="go setting" />
- </RelativeLayout>
+    </RelativeLayout>
 
 </LinearLayout>
