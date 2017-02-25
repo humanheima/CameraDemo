@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.hm.camerademo.R;
-import com.hm.camerademo.ui.BaseActivity;
+import com.hm.camerademo.ui.base.BaseActivity;
 import com.hm.camerademo.ui.adapter.ImageAdapter;
 import com.hm.camerademo.ui.adapter.RxGalleryAdapter;
 import com.hm.camerademo.util.ImageUtil;

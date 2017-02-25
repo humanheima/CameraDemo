@@ -1,12 +1,14 @@
-package com.hm.camerademo.ui;
+package com.hm.camerademo.ui.base;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 
 import com.hm.camerademo.ui.dialog.LoadingDialog;
 
 import butterknife.ButterKnife;
+import pub.devrel.easypermissions.EasyPermissions;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
@@ -36,7 +38,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     /**
      * 绑定控件事件
      */
-    protected abstract void bindEvent();
+    protected void bindEvent() {
+
+    }
 
     protected final void showLoading() {
         showLoading(null);
@@ -57,5 +61,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (loadingDialog != null && loadingDialog.isShowing()) {
             loadingDialog.dismiss();
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults,this);
     }
 }
