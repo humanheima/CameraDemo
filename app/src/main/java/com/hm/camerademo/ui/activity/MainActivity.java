@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
@@ -109,14 +108,8 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             photoFile = ImageUtil.createImageFile();
             if (photoFile != null) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    Log.e(TAG, "Build.VERSION.SDK_INT >= Build.VERSION_CODES.N");
-                    photoURI = FileProvider.getUriForFile(this, "com.hm.camerademo.fileprovider", photoFile);
-                    takePictureIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    takePictureIntent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                } else {
-                    photoURI = Uri.fromFile(photoFile);
-                }
+                photoURI = FileProvider.getUriForFile(this, "com.hm.camerademo.fileprovider", photoFile);
+                Log.e(TAG, photoURI.getPath());
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, TAKE_PHOTO);
             }
@@ -314,7 +307,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
 
     @Override
     public void onPermissionsDenied(int requestCode, List<String> perms) {
-        Log.e(TAG,"onPermissionsDenied");
+        Log.e(TAG, "onPermissionsDenied");
         if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
             new AppSettingsDialog.Builder(this)
                     .setRequestCode(REQUEST_TAKE_PHOTO_PERMISSION)

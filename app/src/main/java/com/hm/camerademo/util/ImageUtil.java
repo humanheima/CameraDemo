@@ -16,7 +16,6 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.hm.camerademo.App;
 import com.hm.camerademo.R;
 
 import java.io.ByteArrayInputStream;
@@ -33,6 +32,7 @@ import java.util.Date;
 import rx.Observable;
 import rx.Subscriber;
 
+
 /**
  * Created by dumingwei on 2017/1/5.
  * 质量压缩不能用bitmap的形式进行压缩
@@ -42,6 +42,7 @@ import rx.Subscriber;
  */
 public class ImageUtil {
 
+    private static final String TAG = "ImageUtil";
     public ImageUtil() {
     }
 
@@ -75,14 +76,15 @@ public class ImageUtil {
         File storageDir;
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         try {
-            if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                storagePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath() + File.separator + "camerademo";
-            } else {
-                storagePath = App.getInstance().getExternalCacheDir().getAbsolutePath() + File.separator + "images";
-            }
+            storagePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath() + File.separator + "camerademo";
+            //storagePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath() + File.separator + "camerademo";
+            //storagePath = App.getInstance().getExternalFilesDir(Environment.DIRECTORY_PICTURES).getAbsolutePath();
+            //storagePath = App.getInstance().getExternalCacheDir().getAbsolutePath() + File.separator + "camerademo";
+            //storagePath = App.getInstance().getFilesDir().getAbsolutePath() + File.separator + "images";
             storageDir = new File(storagePath);
             storageDir.mkdirs();
             imageFile = File.createTempFile(timeStamp, ".jpg", storageDir);
+            Log.e(TAG, imageFile.getAbsolutePath());
         } catch (IOException e) {
             e.printStackTrace();
         }
