@@ -65,14 +65,14 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
 
     @Override
     protected void initData() {
-
+        requestPermission();
     }
 
-    @OnClick({R.id.btn_take_photo, R.id.btn_choose_photo, R.id.btn_save_bitmap, R.id.btn_choose_multi_photo, R.id.btn_xiaanming, R.id.btn_final})
+    @OnClick({R.id.btn_take_photo, R.id.btn_choose_photo, R.id.btn_save_bitmap,
+            R.id.btn_choose_multi_photo, R.id.btn_xiaanming, R.id.btn_final, R.id.btn_compress})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_take_photo:
-                takePhotoRequestPermission();
                 break;
             case R.id.btn_choose_photo:
                 chooseFromAlbum();
@@ -89,15 +89,18 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
             case R.id.btn_final:
                 RxGalleryActivity.launch(MainActivity.this);
                 break;
+            case R.id.btn_compress:
+                CompressActivity.launch(MainActivity.this);
+                break;
             default:
                 break;
         }
     }
 
-    private void takePhotoRequestPermission() {
+    private void requestPermission() {
         String[] prems = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
         if (EasyPermissions.hasPermissions(this, prems)) {
-            takePhoto();
+            Log.d(TAG, "have got permission");
         } else {
             EasyPermissions.requestPermissions(MainActivity.this, "request WRITE_EXTERNAL_STORAGE permission", REQUEST_TAKE_PHOTO_PERMISSION, prems);
         }
@@ -129,15 +132,17 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
         String destination = null;
         imgPreview.setDrawingCacheEnabled(true);
         Bitmap bitmap = imgPreview.getDrawingCache();
-        try {
-            destination = ImageUtil.compressImage(MainActivity.this, bitmap, 70);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (TextUtils.isEmpty(destination)) {
-            Toast.makeText(MainActivity.this, "保存失败", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(MainActivity.this, "压缩成功", Toast.LENGTH_SHORT).show();
+        if (bitmap != null) {
+            try {
+                destination = ImageUtil.compressImage(MainActivity.this, bitmap, 70);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (TextUtils.isEmpty(destination)) {
+                Toast.makeText(MainActivity.this, "保存失败", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(MainActivity.this, "压缩成功", Toast.LENGTH_SHORT).show();
+            }
         }
         imgPreview.setDrawingCacheEnabled(false);
     }
@@ -298,7 +303,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
     public void onPermissionsGranted(int requestCode, List<String> perms) {
         switch (requestCode) {
             case REQUEST_TAKE_PHOTO_PERMISSION:
-                takePhoto();
+                Toast.makeText(MainActivity.this, "have got permission", Toast.LENGTH_SHORT).show();
                 break;
             default:
                 break;

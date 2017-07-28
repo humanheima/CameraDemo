@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.hm.camerademo">
+          package="com.hm.camerademo">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <!--危险权限组STORAGE-->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- 危险权限组STORAGE -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:name=".App"
@@ -15,35 +15,40 @@
         android:theme="@style/AppTheme">
         <activity android:name=".ui.activity.MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activity.MultiPhotoActivity" />
-        <activity android:name=".ui.activity.PictureSelectActivity" />
-        <activity android:name=".ui.activity.PicturePreviewActivity" />
-        <activity android:name=".ui.activity.XAActivity" />
-        <activity android:name=".ui.activity.FuckActivity" />
+        <activity android:name=".ui.activity.MultiPhotoActivity"/>
+        <activity android:name=".ui.activity.PictureSelectActivity"/>
+        <activity android:name=".ui.activity.PicturePreviewActivity"/>
+        <activity android:name=".ui.activity.XAActivity"/>
+        <activity android:name=".ui.activity.FuckActivity"/>
         <activity
             android:name="cn.finalteam.rxgalleryfinal.ui.activity.MediaActivity"
             android:exported="true"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
-            android:exported="true" />
-        <activity android:name=".ui.activity.RxGalleryActivity"></activity>
+            android:exported="true"/>
+        <activity android:name=".ui.activity.RxGalleryActivity"/>
 
-        <!--FileProvider-->
+        <!-- FileProvider -->
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.hm.camerademo.fileprovidersss"
+            android:authorities="com.hm.camerademo.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/filepaths" />
+                android:resource="@xml/filepaths"/>
         </provider>
+
+        <activity
+            android:name=".ui.activity.CompressActivity"
+            android:screenOrientation="portrait">
+        </activity>
     </application>
 
 </manifest>

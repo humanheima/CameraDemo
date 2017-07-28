@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/activity_main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:scrollbars="none">
+                                            android:id="@+id/activity_main"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:scrollbars="none">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,43 +14,49 @@
             android:id="@+id/img_preview"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"/>
 
         <Button
             android:id="@+id/btn_take_photo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="拍照" />
+            android:text="拍照"/>
 
         <Button
             android:id="@+id/btn_choose_photo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="本地选取图片" />
+            android:text="本地选取图片"/>
 
         <Button
             android:id="@+id/btn_save_bitmap"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="把imageView上的bitmap保存到本地" />
+            android:text="把imageView上的bitmap保存到本地"/>
 
         <Button
             android:id="@+id/btn_choose_multi_photo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="从本地选取多张图片" />
+            android:text="从本地选取多张图片"/>
 
         <Button
             android:id="@+id/btn_xiaanming"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="启动xiaanmingActivity" />
+            android:text="启动xiaanmingActivity"/>
 
         <Button
             android:id="@+id/btn_final"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="开源图片选择器" />
+            android:text="开源图片选择器"/>
+
+        <Button
+            android:id="@+id/btn_compress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="图片压缩的例子"/>
     </LinearLayout>
 
 
