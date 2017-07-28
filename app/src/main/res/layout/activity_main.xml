@@ -57,6 +57,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="图片压缩的例子"/>
+
+        <Button
+            android:id="@+id/btn_texture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TextureView"
+            android:textAllCaps="false"/>
     </LinearLayout>
 
 

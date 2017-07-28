@@ -69,7 +69,8 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
     }
 
     @OnClick({R.id.btn_take_photo, R.id.btn_choose_photo, R.id.btn_save_bitmap,
-            R.id.btn_choose_multi_photo, R.id.btn_xiaanming, R.id.btn_final, R.id.btn_compress})
+            R.id.btn_choose_multi_photo, R.id.btn_xiaanming, R.id.btn_final,
+            R.id.btn_compress, R.id.btn_texture})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_take_photo:
@@ -92,13 +93,16 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
             case R.id.btn_compress:
                 CompressActivity.launch(MainActivity.this);
                 break;
+            case R.id.btn_texture:
+                TextureViewActivity.launch(MainActivity.this);
+                break;
             default:
                 break;
         }
     }
 
     private void requestPermission() {
-        String[] prems = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        String[] prems = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
         if (EasyPermissions.hasPermissions(this, prems)) {
             Log.d(TAG, "have got permission");
         } else {
@@ -316,7 +320,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
         if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
             new AppSettingsDialog.Builder(this)
                     .setRequestCode(REQUEST_TAKE_PHOTO_PERMISSION)
-                    .setRationale("请在应用中开启读写权限")
+                    .setRationale("请在应用中开启所需的权限")
                     .build().show();
         }
     }
