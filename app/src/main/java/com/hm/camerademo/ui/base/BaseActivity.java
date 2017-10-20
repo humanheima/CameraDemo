@@ -15,7 +15,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     private LoadingDialog loadingDialog;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(bindLayout());
         ButterKnife.bind(this);

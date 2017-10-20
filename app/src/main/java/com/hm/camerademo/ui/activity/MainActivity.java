@@ -2,6 +2,8 @@ package com.hm.camerademo.ui.activity;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -44,6 +46,8 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
     private static final int TAKE_PHOTO = 1000;
     public static final int REQUEST_TAKE_PHOTO_PERMISSION = 1001;
     public static final int CHOOSE_FROM_ALBUM = 1002;
+    //系统剪裁
+    public static final int SYSTEM_CROP = 1003;
     @BindView(R.id.img_preview)
     ImageView imgPreview;
     @BindView(R.id.btn_take_photo)
@@ -74,6 +78,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_take_photo:
+                takePhoto();
                 break;
             case R.id.btn_choose_photo:
                 chooseFromAlbum();
@@ -116,7 +121,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
             photoFile = ImageUtil.createImageFile();
             if (photoFile != null) {
                 photoURI = FileProvider.getUriForFile(this, "com.hm.camerademo.fileprovider", photoFile);
-                Log.e(TAG, photoURI.getPath());
+                Log.e(TAG, "takePhoto" + photoURI.getPath());
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, TAKE_PHOTO);
             }
@@ -157,7 +162,24 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
         switch (requestCode) {
             case TAKE_PHOTO:
                 if (resultCode == RESULT_OK) {
-                    processTakePhoto(photoFile.getPath());
+                    //processTakePhoto(photoFile.getPath());
+                    Intent intent = new Intent();
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    intent.setAction("com.android.camera.action.CROP");
+                    intent.setDataAndType(photoURI, "image/*");
+                    Uri tempUri = FileProvider.getUriForFile(this, "com.hm.camerademo.fileprovider", ImageUtil.createImageFile());
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, tempUri);
+                    intent.putExtra("crop", true);
+                    intent.putExtra("outputX", 400);
+                    intent.putExtra("outputY", 400);
+                    intent.putExtra("return-data", false);
+                    //将存储图片的uri读写权限授权给剪裁工具应用
+                    List<ResolveInfo> resInfoList = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+                    for (ResolveInfo resolveInfo : resInfoList) {
+                        String packageName = resolveInfo.activityInfo.packageName;
+                        grantUriPermission(packageName, tempUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    }
+                    startActivityForResult(intent, SYSTEM_CROP);
                 }
                 break;
             case CHOOSE_FROM_ALBUM:
@@ -177,6 +199,10 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
                 }
                 break;
             case REQUEST_TAKE_PHOTO_PERMISSION:
+                break;
+            case SYSTEM_CROP:
+                if (resultCode == RESULT_OK)
+                    Log.e(TAG, "SYSTEM_CROP");
                 break;
             default:
                 break;

@@ -10,8 +10,8 @@
     <application
         android:name=".App"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
         android:hardwareAccelerated="true"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
@@ -52,6 +52,9 @@
             android:screenOrientation="portrait">
         </activity>
         <activity android:name=".ui.activity.TextureViewActivity">
+        </activity>
+        <!--自定义剪裁界面-->
+        <activity android:name=".ui.activity.CropActivity">
         </activity>
     </application>
 
