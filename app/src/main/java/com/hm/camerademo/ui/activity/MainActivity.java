@@ -61,6 +61,8 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
     private File photoFile;
     private Uri photoURI;
     private MyDialog dialog;
+    private File cropFile;
+    private Uri cropUri;
 
     @Override
     protected int bindLayout() {
@@ -163,23 +165,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
             case TAKE_PHOTO:
                 if (resultCode == RESULT_OK) {
                     //processTakePhoto(photoFile.getPath());
-                    Intent intent = new Intent();
-                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    intent.setAction("com.android.camera.action.CROP");
-                    intent.setDataAndType(photoURI, "image/*");
-                    Uri tempUri = FileProvider.getUriForFile(this, "com.hm.camerademo.fileprovider", ImageUtil.createImageFile());
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, tempUri);
-                    intent.putExtra("crop", true);
-                    intent.putExtra("outputX", 400);
-                    intent.putExtra("outputY", 400);
-                    intent.putExtra("return-data", false);
-                    //将存储图片的uri读写权限授权给剪裁工具应用
-                    List<ResolveInfo> resInfoList = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
-                    for (ResolveInfo resolveInfo : resInfoList) {
-                        String packageName = resolveInfo.activityInfo.packageName;
-                        grantUriPermission(packageName, tempUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    }
-                    startActivityForResult(intent, SYSTEM_CROP);
+                    cropPhoto();
                 }
                 break;
             case CHOOSE_FROM_ALBUM:
@@ -203,10 +189,31 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
             case SYSTEM_CROP:
                 if (resultCode == RESULT_OK)
                     Log.e(TAG, "SYSTEM_CROP");
+                ImageUtil.load(MainActivity.this, cropFile.getPath(), imgPreview);
                 break;
             default:
                 break;
         }
+    }
+
+    private void cropPhoto() {
+        Intent intent = new Intent();
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.setAction("com.android.camera.action.CROP");
+        intent.setDataAndType(photoURI, "image/*");
+        cropFile = ImageUtil.createImageFile();
+        cropUri = FileProvider.getUriForFile(this, "com.hm.camerademo.fileprovider", cropFile);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, cropUri);
+        //剪裁后的图片尺寸,可以指定，也可以不指定
+        //intent.putExtra("outputX", 400);
+        //intent.putExtra("outputY", 400);
+        //将存储图片的uri读写权限授权给剪裁工具应用
+        List<ResolveInfo> resInfoList = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        for (ResolveInfo resolveInfo : resInfoList) {
+            String packageName = resolveInfo.activityInfo.packageName;
+            grantUriPermission(packageName, cropUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        }
+        startActivityForResult(intent, SYSTEM_CROP);
     }
 
     /**
