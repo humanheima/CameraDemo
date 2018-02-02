@@ -6,7 +6,6 @@ import android.widget.RelativeLayout;
 
 public class ScaleRelativeLayout extends RelativeLayout {
 
-
     public ScaleRelativeLayout(Context context) {
         this(context, null);
     }

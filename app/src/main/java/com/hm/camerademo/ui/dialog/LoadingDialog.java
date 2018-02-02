@@ -29,7 +29,7 @@ public class LoadingDialog extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_loading);
-        textContent = (TextView) findViewById(R.id.dialog_loading_text);
+        textContent = findViewById(R.id.dialog_loading_text);
         if (!TextUtils.isEmpty(strContent)) {
             textContent.setText(strContent);
         }

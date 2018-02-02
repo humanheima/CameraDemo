@@ -4,10 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.hm.camerademo.R;
+import com.hm.camerademo.databinding.ActivityCropBinding;
 import com.hm.camerademo.ui.base.BaseActivity;
 
-public class CropActivity extends BaseActivity {
-
+public class CropActivity extends BaseActivity<ActivityCropBinding> {
 
     public static void launch(Context context) {
         Intent starter = new Intent(context, CropActivity.class);

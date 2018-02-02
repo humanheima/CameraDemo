@@ -14,7 +14,7 @@ import java.util.List;
 
 public class ImageAdapter extends ArrayAdapter<String> {
 
-    public static final int IMG_MAX_NUM = 9;//最多9张图片
+    private final int maxCount;
     private Context context;
     private int resource;
     private List<String> stringList;
@@ -24,16 +24,17 @@ public class ImageAdapter extends ArrayAdapter<String> {
         this.onAddImageListener = onAddImageListener;
     }
 
-    public ImageAdapter(Context context, int resource, List<String> objects) {
+    public ImageAdapter(Context context, int resource, List<String> objects,int maxCount) {
         super(context, resource, objects);
         this.context = context;
         this.resource = resource;
         this.stringList = objects;
+        this.maxCount=maxCount;
     }
 
     @Override
     public int getCount() {
-        if (stringList.size() < IMG_MAX_NUM) {
+        if (stringList.size() < maxCount) {
             return stringList.size() + 1;
         } else {
             return stringList.size();
@@ -42,21 +43,17 @@ public class ImageAdapter extends ArrayAdapter<String> {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        if (context == null) {
-            context = parent.getContext();
-        }
         final OutDetailHolder holder;
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(resource, parent, false);
             holder = new OutDetailHolder();
-            holder.imageView = (ImageView) convertView.findViewById(R.id.item_img_book);
-            holder.imageViewAdd = (ImageView) convertView.findViewById(R.id.item_add_img);
+            holder.imageView = convertView.findViewById(R.id.item_img_book);
+            holder.imageViewAdd = convertView.findViewById(R.id.item_add_img);
             convertView.setTag(holder);
         } else {
             holder = (OutDetailHolder) convertView.getTag();
         }
-
-        if (position == stringList.size() && position < IMG_MAX_NUM) {
+        if (position == stringList.size() && position < maxCount) {
             holder.imageViewAdd.setVisibility(View.VISIBLE);
             holder.imageView.setVisibility(View.GONE);
             if (onAddImageListener != null) {
@@ -83,7 +80,7 @@ public class ImageAdapter extends ArrayAdapter<String> {
         return convertView;
     }
 
-    class OutDetailHolder {
+    private class OutDetailHolder {
         private ImageView imageView;
         private ImageView imageViewAdd;
     }

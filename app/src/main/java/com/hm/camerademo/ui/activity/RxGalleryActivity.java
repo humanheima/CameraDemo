@@ -4,22 +4,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import com.hm.camerademo.R;
-import com.hm.camerademo.ui.base.BaseActivity;
+import com.hm.camerademo.databinding.ActivityRxGalleryBinding;
 import com.hm.camerademo.ui.adapter.ImageAdapter;
 import com.hm.camerademo.ui.adapter.RxGalleryAdapter;
+import com.hm.camerademo.ui.base.BaseActivity;
 import com.hm.camerademo.util.ImageUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.OnClick;
 import cn.finalteam.rxgalleryfinal.RxGalleryFinal;
 import cn.finalteam.rxgalleryfinal.bean.MediaBean;
 import cn.finalteam.rxgalleryfinal.imageloader.ImageLoaderType;
@@ -27,18 +22,8 @@ import cn.finalteam.rxgalleryfinal.rxbus.RxBusResultSubscriber;
 import cn.finalteam.rxgalleryfinal.rxbus.event.ImageMultipleResultEvent;
 import cn.finalteam.rxgalleryfinal.rxbus.event.ImageRadioResultEvent;
 
-public class RxGalleryActivity extends BaseActivity {
+public class RxGalleryActivity extends BaseActivity<ActivityRxGalleryBinding> {
 
-
-    private final String TAG = getClass().getSimpleName();
-    @BindView(R.id.grid_view)
-    GridView gridView;
-    @BindView(R.id.activity_rx_gallery)
-    RelativeLayout activityRxGallery;
-    @BindView(R.id.btn_single)
-    Button btnSingle;
-    @BindView(R.id.img_single)
-    ImageView imgSingle;
     private RxGalleryAdapter adapter;
     private List<MediaBean> imagesList;
 
@@ -77,7 +62,7 @@ public class RxGalleryActivity extends BaseActivity {
                     //PicturePreviewActivity.launch(RxGalleryActivity.this, imagesList, position);
                 }
             });
-            gridView.setAdapter(adapter);
+            viewBind.gridView.setAdapter(adapter);
         } else {
             adapter.notifyDataSetChanged();
         }
@@ -86,7 +71,7 @@ public class RxGalleryActivity extends BaseActivity {
 
     private void selectImages() {
         RxGalleryFinal.with(this)
-                .maxSize(ImageAdapter.IMG_MAX_NUM)
+                .maxSize(9)
                 .image()
                 .imageLoader(ImageLoaderType.GLIDE)
                 .selected(imagesList)
@@ -101,8 +86,7 @@ public class RxGalleryActivity extends BaseActivity {
                 .openGallery();
     }
 
-    @OnClick(R.id.btn_single)
-    public void onClick() {
+    public void onClick(View view) {
         RxGalleryFinal.with(this)
                 .image()
                 .radio()
@@ -112,7 +96,7 @@ public class RxGalleryActivity extends BaseActivity {
                     @Override
                     protected void onEvent(ImageRadioResultEvent resultEvent) throws Exception {
                         Log.e(TAG, resultEvent.getResult().getCropPath());
-                        ImageUtil.load(RxGalleryActivity.this, resultEvent.getResult().getCropPath(), imgSingle);
+                        ImageUtil.load(RxGalleryActivity.this, resultEvent.getResult().getCropPath(), viewBind.imgSingle);
                     }
                 }).openGallery();
     }

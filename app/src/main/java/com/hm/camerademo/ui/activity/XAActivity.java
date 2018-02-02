@@ -4,18 +4,15 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.GridView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.hm.camerademo.R;
+import com.hm.camerademo.databinding.ActivityXaBinding;
 import com.hm.camerademo.ui.adapter.XAGroupAdapter;
+import com.hm.camerademo.ui.base.BaseActivity;
 import com.hm.camerademo.util.xiananmingdemo.ImageBean;
 
 import java.io.File;
@@ -25,23 +22,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
 
-public class XAActivity extends AppCompatActivity {
-
-    private final String TAG = getClass().getSimpleName();
-    @BindView(R.id.texthehe)
-    TextView texthehe;
-    @BindView(R.id.activity_xa)
-    RelativeLayout activityXa;
-    @BindView(R.id.grid_view_group)
-    GridView gridView;
+public class XAActivity extends BaseActivity<ActivityXaBinding> {
 
     private Map<String, List<String>> mGroupMap;
     private List<ImageBean> imageBeanList;
@@ -53,10 +40,12 @@ public class XAActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_xa);
-        ButterKnife.bind(this);
+    protected int bindLayout() {
+        return R.layout.activity_xa;
+    }
+
+    @Override
+    protected void initData() {
         mGroupMap = new HashMap<>();
         imageBeanList = new ArrayList<>();
         getImages();
@@ -132,18 +121,17 @@ public class XAActivity extends AppCompatActivity {
                 });
     }
 
-
     private void setAdapter() {
         if (adapter == null) {
             Log.e(TAG, "setAdapter imageBeanList size=" + imageBeanList.size());
             adapter = new XAGroupAdapter(XAActivity.this, R.layout.item_grid_view, imageBeanList);
-            gridView.setAdapter(adapter);
-            gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            viewBind.gridViewGroup.setAdapter(adapter);
+            viewBind.gridViewGroup.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     List<String> list = mGroupMap.get(imageBeanList.get(position).getFolderName());
                     Log.e(TAG, "onItemClick list size=" + list.size());
-                    FuckActivity.launch(XAActivity.this, list);
+                    FakeActivity.launch(XAActivity.this, list);
                 }
             });
         } else {

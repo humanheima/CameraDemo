@@ -26,7 +26,7 @@ public class TextureViewActivity extends AppCompatActivity implements TextureVie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_texture_view);
-        mTextureView = (TextureView) findViewById(R.id.texture_view);
+        mTextureView = findViewById(R.id.texture_view);
         mTextureView.setSurfaceTextureListener(this);
     }
 

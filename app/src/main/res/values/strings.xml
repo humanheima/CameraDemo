@@ -2,5 +2,10 @@
     <string name="app_name">CameraDemo</string>
     <string name="total_number_of_image">所有图片 %d张</string>
     <string name="max_image_size">最多添加%d张图片</string>
+    <string name="take_photo">拍照</string>
+    <string name="choose_from_album">从相册选取图片</string>
+    <string name="save_bitmap_from_imageview">把ImageView上的Bitmap保存到本地</string>
+    <string name="choose_a_picture">选择单张图片</string>
+    <string name="customize_picture_picker">自定义图片选择器</string>
 
 </resources>

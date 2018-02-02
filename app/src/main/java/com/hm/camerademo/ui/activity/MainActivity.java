@@ -12,23 +12,19 @@ import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.hm.camerademo.R;
+import com.hm.camerademo.databinding.ActivityMainBinding;
 import com.hm.camerademo.network.HttpResult;
 import com.hm.camerademo.network.NetWork;
 import com.hm.camerademo.ui.base.BaseActivity;
-import com.hm.camerademo.ui.fragment.MyDialog;
 import com.hm.camerademo.util.ImageUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.OnClick;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -40,7 +36,7 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
-public class MainActivity extends BaseActivity implements EasyPermissions.PermissionCallbacks {
+public class MainActivity extends BaseActivity<ActivityMainBinding> implements EasyPermissions.PermissionCallbacks {
 
     private final String TAG = getClass().getSimpleName();
     private static final int TAKE_PHOTO = 1000;
@@ -48,21 +44,8 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
     public static final int CHOOSE_FROM_ALBUM = 1002;
     //系统剪裁
     public static final int SYSTEM_CROP = 1003;
-    @BindView(R.id.img_preview)
-    ImageView imgPreview;
-    @BindView(R.id.btn_take_photo)
-    Button btnTakePhoto;
-    @BindView(R.id.btn_choose_photo)
-    Button btnChoosePhoto;
-    @BindView(R.id.btn_save_bitmap)
-    Button btnCompressBitmap;
-    @BindView(R.id.btn_choose_multi_photo)
-    Button btnChooseMultiPhoto;
-    private File photoFile;
     private Uri photoURI;
-    private MyDialog dialog;
     private File cropFile;
-    private Uri cropUri;
 
     @Override
     protected int bindLayout() {
@@ -74,9 +57,6 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
         requestPermission();
     }
 
-    @OnClick({R.id.btn_take_photo, R.id.btn_choose_photo, R.id.btn_save_bitmap,
-            R.id.btn_choose_multi_photo, R.id.btn_xiaanming, R.id.btn_final,
-            R.id.btn_compress, R.id.btn_texture})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_take_photo:
@@ -89,7 +69,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
                 saveBitmap();
                 break;
             case R.id.btn_choose_multi_photo:
-                MultiPhotoActivity.launch(MainActivity.this);
+                MultiPhotoActivity.launch(MainActivity.this, 3);
                 break;
             case R.id.btn_xiaanming:
                 XAActivity.launch(MainActivity.this);
@@ -120,7 +100,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
     private void takePhoto() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            photoFile = ImageUtil.createImageFile();
+            File photoFile = ImageUtil.createImageFile();
             if (photoFile != null) {
                 photoURI = FileProvider.getUriForFile(this, "com.hm.camerademo.fileprovider", photoFile);
                 Log.e(TAG, "takePhoto" + photoURI.getPath());
@@ -141,8 +121,8 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
      */
     private void saveBitmap() {
         String destination = null;
-        imgPreview.setDrawingCacheEnabled(true);
-        Bitmap bitmap = imgPreview.getDrawingCache();
+        viewBind.imgPreview.setDrawingCacheEnabled(true);
+        Bitmap bitmap = viewBind.imgPreview.getDrawingCache();
         if (bitmap != null) {
             try {
                 destination = ImageUtil.compressImage(MainActivity.this, bitmap, 70);
@@ -155,7 +135,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
                 Toast.makeText(MainActivity.this, "压缩成功", Toast.LENGTH_SHORT).show();
             }
         }
-        imgPreview.setDrawingCacheEnabled(false);
+        viewBind.imgPreview.setDrawingCacheEnabled(false);
     }
 
     @Override
@@ -189,7 +169,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
             case SYSTEM_CROP:
                 if (resultCode == RESULT_OK)
                     Log.e(TAG, "SYSTEM_CROP");
-                ImageUtil.load(MainActivity.this, cropFile.getPath(), imgPreview);
+                ImageUtil.load(MainActivity.this, cropFile.getPath(), viewBind.imgPreview);
                 break;
             default:
                 break;
@@ -202,7 +182,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
         intent.setAction("com.android.camera.action.CROP");
         intent.setDataAndType(photoURI, "image/*");
         cropFile = ImageUtil.createImageFile();
-        cropUri = FileProvider.getUriForFile(this, "com.hm.camerademo.fileprovider", cropFile);
+        Uri cropUri = FileProvider.getUriForFile(this, "com.hm.camerademo.fileprovider", cropFile);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, cropUri);
         //剪裁后的图片尺寸,可以指定，也可以不指定
         //intent.putExtra("outputX", 400);
@@ -242,7 +222,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
                 .subscribe(new Action1<String>() {
                     @Override
                     public void call(String imgPath) {
-                        ImageUtil.load(MainActivity.this, imgPath, imgPreview);
+                        ImageUtil.load(MainActivity.this, imgPath, viewBind.imgPreview);
                         Toast.makeText(MainActivity.this, "压缩成功", Toast.LENGTH_SHORT).show();
                         // TODO: 2017/2/10 在这里上传图片
                         //uploadAvatar(imgPath);
@@ -261,10 +241,8 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
      * @param picturePath
      */
     private void processChoosePicture(final String picturePath) {
-        ImageUtil.load(MainActivity.this, picturePath, imgPreview);
+        ImageUtil.load(MainActivity.this, picturePath, viewBind.imgPreview);
         Observable.just(picturePath)
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .observeOn(Schedulers.io())
                 .map(new Func1<String, Bitmap>() {
                     @Override
                     public Bitmap call(String s) {
@@ -288,6 +266,8 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
                         return ImageUtil.observableSaveImageToExternal(MainActivity.this, bitmap);
                     }
                 })
+                .subscribeOn(Schedulers.io())
+
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<String>() {
                     @Override
@@ -299,6 +279,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
+                        Log.e(TAG, "call: " + throwable);
                     }
                 });
     }

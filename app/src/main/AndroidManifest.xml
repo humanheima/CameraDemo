@@ -26,7 +26,7 @@
         <activity android:name=".ui.activity.PictureSelectActivity"/>
         <activity android:name=".ui.activity.PicturePreviewActivity"/>
         <activity android:name=".ui.activity.XAActivity"/>
-        <activity android:name=".ui.activity.FuckActivity"/>
+        <activity android:name=".ui.activity.FakeActivity"/>
         <activity
             android:name="cn.finalteam.rxgalleryfinal.ui.activity.MediaActivity"
             android:exported="true"

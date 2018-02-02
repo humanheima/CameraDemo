@@ -43,8 +43,8 @@ public class XAShowImageAdapter extends ArrayAdapter<String> {
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(resource, null);
             holder = new ShowImageVH();
-            holder.imageView = (MyImageView) convertView.findViewById(R.id.child_image);
-            holder.checkBox = (CheckBox) convertView.findViewById(R.id.child_checkbox);
+            holder.imageView = convertView.findViewById(R.id.child_image);
+            holder.checkBox = convertView.findViewById(R.id.child_checkbox);
             convertView.setTag(holder);
         } else {
             holder = (ShowImageVH) convertView.getTag();

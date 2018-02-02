@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -43,6 +44,7 @@ import rx.Subscriber;
 public class ImageUtil {
 
     private static final String TAG = "ImageUtil";
+    private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HH:mm:ss", Locale.CHINA);
 
     public ImageUtil() {
     }
@@ -75,7 +77,7 @@ public class ImageUtil {
         File imageFile = null;
         String storagePath;
         File storageDir;
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String timeStamp = dateFormat.format(new Date());
         try {
             storagePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath() + File.separator + "camerademo";
             //storagePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath() + File.separator + "camerademo";
@@ -87,7 +89,7 @@ public class ImageUtil {
             imageFile = File.createTempFile(timeStamp, ".jpg", storageDir);
             Log.e(TAG, imageFile.getAbsolutePath());
         } catch (IOException e) {
-            Log.e(TAG,"error"+e.getMessage());
+            Log.e(TAG, "error" + e.getMessage());
             e.printStackTrace();
         }
         return imageFile;

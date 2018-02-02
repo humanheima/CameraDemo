@@ -2,19 +2,16 @@ package com.hm.camerademo.ui.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hm.camerademo.R;
+import com.hm.camerademo.databinding.ActivityPictureSelectBinding;
 import com.hm.camerademo.listener.OnItemClickListener;
 import com.hm.camerademo.ui.adapter.PictureSelectAdapter;
+import com.hm.camerademo.ui.base.BaseActivity;
 import com.hm.camerademo.util.ListUtil;
 import com.hm.camerademo.util.localImages.ImageItem;
 import com.hm.camerademo.util.localImages.LocalImagesUtil;
@@ -24,31 +21,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
-public class PictureSelectActivity extends AppCompatActivity {
+public class PictureSelectActivity extends BaseActivity<ActivityPictureSelectBinding> {
 
     private final String TAG = getClass().getSimpleName();
     public static final String IMAGE_LIST = "image_list";
     public static final String IMAGE_MAX_NUM = "image_max_num";
-
-    @BindView(R.id.recyclerView)
-    RecyclerView recyclerView;
-    @BindView(R.id.btn_complete)
-    Button btnComplete;
-    @BindView(R.id.text_default)
-    TextView textDefault;
-    @BindView(R.id.text_number)
-    TextView textNumber;
-    @BindView(R.id.text_max_image_size)
-    TextView textMaxImageSize;
 
     private List<String> imageList;//前一个界面已经选中的图片的地址
     private int maxImageNum;//图片选择的最大数量
@@ -65,14 +48,16 @@ public class PictureSelectActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_picture_select);
-        ButterKnife.bind(this);
+    protected int bindLayout() {
+        return R.layout.activity_picture_select;
+    }
+
+    @Override
+    protected void initData() {
         imageList = (List<String>) getIntent().getSerializableExtra(IMAGE_LIST);
         maxImageNum = getIntent().getIntExtra(IMAGE_MAX_NUM, 0);
         imageNotShow = new ArrayList<>();
-        textDefault.setText("/".concat(String.valueOf(maxImageNum).concat("张")));
+        viewBind.textDefault.setText("/".concat(String.valueOf(maxImageNum).concat("张")));
         selectCount = imageList.size();
         imageLocal = new ArrayList<>();
         Observable.create(new Observable.OnSubscribe<List<ImageItem>>() {
@@ -88,7 +73,7 @@ public class PictureSelectActivity extends AppCompatActivity {
                     public void call(List<ImageItem> imageItems) {
                         imageLocal.clear();
                         imageLocal.addAll(imageItems);
-                        textMaxImageSize.setText(String.format(Locale.CHINA, "所有图片 %d张", imageLocal.size()));
+                        viewBind.textMaxImageSize.setText(String.format(Locale.CHINA, "所有图片 %d张", imageLocal.size()));
                         //统计前一个界面显示的非本地的图片(比如从网络上加载的图片)
                         if (!ListUtil.isEmpty(imageList)) {
                             for (String path : imageList) {
@@ -104,6 +89,7 @@ public class PictureSelectActivity extends AppCompatActivity {
                                 }
                             }
                         }
+                        //统计前一个界面显示的本地的图片
                         if (!ListUtil.isEmpty(imageList)) {
                             for (String imagePath : imageList) {
                                 for (int i = 0; i < imageLocal.size(); i++) {
@@ -116,12 +102,12 @@ public class PictureSelectActivity extends AppCompatActivity {
                                 }
                             }
                         }
-                        textNumber.setText(String.valueOf(selectCount));
+                        viewBind.textNumber.setText(String.valueOf(selectCount));
                         GridLayoutManager gridLayoutManager = new GridLayoutManager(PictureSelectActivity.this, 3);
                         gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
-                        recyclerView.setLayoutManager(gridLayoutManager);
+                        viewBind.recyclerView.setLayoutManager(gridLayoutManager);
                         adapter = new PictureSelectAdapter(imageLocal);
-                        recyclerView.setAdapter(adapter);
+                        viewBind.recyclerView.setAdapter(adapter);
                         adapter.setOnItemClickListener(new OnItemClickListener() {
                             @Override
                             public void onItemClick(View view, int position) {
@@ -140,7 +126,7 @@ public class PictureSelectActivity extends AppCompatActivity {
                                 }
                                 item.setSelected(!item.isSelected());
                                 imageLocal.set(position, item);
-                                textNumber.setText(String.valueOf(selectCount));
+                                viewBind.textNumber.setText(String.valueOf(selectCount));
                                 adapter.notifyItemChanged(position);
                             }
                         });
@@ -154,8 +140,7 @@ public class PictureSelectActivity extends AppCompatActivity {
 
     }
 
-    @OnClick(R.id.btn_complete)
-    public void onClick() {
+    public void onClick(View view) {
         List<String> images = new ArrayList<>();
         if (!ListUtil.isEmpty(imageNotShow)) {
             images.addAll(imageNotShow);
@@ -172,9 +157,4 @@ public class PictureSelectActivity extends AppCompatActivity {
         finish();
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-    }
 }

@@ -1,29 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/activity_rx_gallery"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<layout>
 
-    <Button
-        android:id="@+id/btn_single"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="选择单张图片" />
+    <data></data>
 
-    <ImageView
-        android:id="@+id/img_single"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/activity_rx_gallery"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_toRightOf="@+id/btn_single" />
+        android:layout_height="match_parent">
 
-    <GridView
-        android:id="@+id/grid_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/img_single"
-        android:layout_margin="8dp"
-        android:horizontalSpacing="8dp"
-        android:numColumns="3"
-        android:scrollbars="none"
-        android:verticalSpacing="8dp" />
-</RelativeLayout>
+        <Button
+            android:id="@+id/btn_single"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClick"
+            android:text="@string/choose_a_picture" />
+
+        <ImageView
+            android:id="@+id/img_single"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_toRightOf="@+id/btn_single" />
+
+        <GridView
+            android:id="@+id/grid_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/img_single"
+            android:layout_margin="8dp"
+            android:horizontalSpacing="8dp"
+            android:numColumns="3"
+            android:scrollbars="none"
+            android:verticalSpacing="8dp" />
+    </RelativeLayout>
+</layout>
+

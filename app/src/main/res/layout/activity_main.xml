@@ -1,70 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-                                            android:id="@+id/activity_main"
-                                            android:layout_width="match_parent"
-                                            android:layout_height="match_parent"
-                                            android:scrollbars="none">
+<layout>
 
-    <LinearLayout
+    <data>
+
+    </data>
+
+    <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/activity_main"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:scrollbars="none">
 
-        <ImageView
-            android:id="@+id/img_preview"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:scaleType="centerCrop"/>
-
-        <Button
-            android:id="@+id/btn_take_photo"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="拍照"/>
+            android:orientation="vertical">
 
-        <Button
-            android:id="@+id/btn_choose_photo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="本地选取图片"/>
+            <ImageView
+                android:src="@drawable/ic_big_news"
+                android:id="@+id/img_preview"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:scaleType="centerInside" />
 
-        <Button
-            android:id="@+id/btn_save_bitmap"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="把imageView上的bitmap保存到本地"/>
+            <Button
+                android:id="@+id/btn_take_photo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onClick"
+                android:text="@string/take_photo" />
 
-        <Button
-            android:id="@+id/btn_choose_multi_photo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="从本地选取多张图片"/>
+            <Button
+                android:id="@+id/btn_choose_photo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onClick"
+                android:text="@string/choose_from_album" />
 
-        <Button
-            android:id="@+id/btn_xiaanming"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="启动xiaanmingActivity"/>
+            <Button
+                android:id="@+id/btn_save_bitmap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onClick"
+                android:textAllCaps="false"
+                android:text="@string/save_bitmap_from_imageview" />
 
-        <Button
-            android:id="@+id/btn_final"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="开源图片选择器"/>
+            <Button
+                android:id="@+id/btn_choose_multi_photo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onClick"
+                android:text="@string/customize_picture_picker" />
 
-        <Button
-            android:id="@+id/btn_compress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="图片压缩的例子"/>
+            <Button
+                android:id="@+id/btn_xiaanming"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onClick"
+                android:text="启动xiaanmingActivity"
+                android:textAllCaps="false" />
 
-        <Button
-            android:id="@+id/btn_texture"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TextureView"
-            android:textAllCaps="false"/>
-    </LinearLayout>
+            <Button
+                android:id="@+id/btn_final"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onClick"
+                android:text="开源图片选择器" />
 
+            <Button
+                android:id="@+id/btn_compress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onClick"
+                android:text="图片压缩的例子" />
 
-</android.support.v4.widget.NestedScrollView>
+            <Button
+                android:id="@+id/btn_texture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onClick"
+                android:text="TextureView"
+                android:textAllCaps="false" />
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+</layout>
+

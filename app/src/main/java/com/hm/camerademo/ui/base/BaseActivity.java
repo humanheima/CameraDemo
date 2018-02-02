@@ -1,5 +1,7 @@
 package com.hm.camerademo.ui.base;
 
+import android.databinding.DataBindingUtil;
+import android.databinding.ViewDataBinding;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -7,18 +9,19 @@ import android.text.TextUtils;
 
 import com.hm.camerademo.ui.dialog.LoadingDialog;
 
-import butterknife.ButterKnife;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity<V extends ViewDataBinding> extends AppCompatActivity {
 
+    protected final String TAG = getClass().getSimpleName();
     private LoadingDialog loadingDialog;
+
+    protected V viewBind;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(bindLayout());
-        ButterKnife.bind(this);
+        viewBind= DataBindingUtil.setContentView(this,bindLayout());
         initData();
         bindEvent();
     }
@@ -66,6 +69,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults,this);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
 }

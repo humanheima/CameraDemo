@@ -1,21 +1,19 @@
 package com.hm.camerademo.ui.adapter;
 
 import android.content.Context;
+import android.databinding.DataBindingUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.hm.camerademo.R;
+import com.hm.camerademo.databinding.ItemPictureSelectBinding;
 import com.hm.camerademo.listener.OnItemClickListener;
 import com.hm.camerademo.util.ImageUtil;
 import com.hm.camerademo.util.localImages.ImageItem;
 
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by dumingwei on 2017/2/4.
@@ -38,11 +36,14 @@ public class PictureSelectAdapter extends RecyclerView.Adapter<PictureSelectAdap
 
     @Override
     public PictureSelectHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (context==null){
+        if (context == null) {
             context = parent.getContext();
         }
-        View convertView = LayoutInflater.from(context).inflate(R.layout.item_picture_select, parent, false);
-        return new PictureSelectHolder(convertView);
+        ItemPictureSelectBinding binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()),
+                R.layout.item_picture_select, parent, false);
+        PictureSelectHolder holder = new PictureSelectHolder(binding.getRoot());
+        holder.setBinding(binding);
+        return holder;
     }
 
     @Override
@@ -57,13 +58,13 @@ public class PictureSelectAdapter extends RecyclerView.Adapter<PictureSelectAdap
             });
         }
         if (item.isSelected()) {
-            holder.imgSelected.setImageResource(R.drawable.ic_pictures_selected);
-            holder.imgLocal.setColorFilter(SELECTED_COLOR_FILTER);
+            holder.getBinding().imgSelect.setImageResource(R.drawable.ic_pictures_selected);
+            holder.getBinding().imgLocal.setColorFilter(SELECTED_COLOR_FILTER);
         } else {
-            holder.imgSelected.setImageResource(R.drawable.ic_picture_unselected);
-            holder.imgLocal.setColorFilter(null);
+            holder.getBinding().imgSelect.setImageResource(R.drawable.ic_picture_unselected);
+            holder.getBinding().imgLocal.setColorFilter(null);
         }
-        ImageUtil.loadLocalFile(context, holder.imgLocal, item.getImagePath());
+        ImageUtil.loadLocalFile(context, holder.getBinding().imgLocal, item.getImagePath());
     }
 
     @Override
@@ -73,14 +74,19 @@ public class PictureSelectAdapter extends RecyclerView.Adapter<PictureSelectAdap
 
     public class PictureSelectHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.img_local)
-        ImageView imgLocal;
-        @BindView(R.id.img_select)
-        ImageView imgSelected;
+        private ItemPictureSelectBinding binding;
 
-        public PictureSelectHolder(View view) {
-            super(view);
-            ButterKnife.bind(this, view);
+        public PictureSelectHolder(View itemView) {
+            super(itemView);
         }
+
+        public ItemPictureSelectBinding getBinding() {
+            return binding;
+        }
+
+        public void setBinding(ItemPictureSelectBinding binding) {
+            this.binding = binding;
+        }
+
     }
 }
