@@ -207,6 +207,8 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
         //剪裁后的图片尺寸,可以指定，也可以不指定
         //intent.putExtra("outputX", 400);
         //intent.putExtra("outputY", 400);
+        //intent.putExtra("scale", true);  //是否保持比例
+        //intent.putExtra("return-data", false);  //是否返回bitmap
         //将存储图片的uri读写权限授权给剪裁工具应用
         List<ResolveInfo> resInfoList = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
         for (ResolveInfo resolveInfo : resInfoList) {
