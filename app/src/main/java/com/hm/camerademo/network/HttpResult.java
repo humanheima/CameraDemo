@@ -2,11 +2,6 @@ package com.hm.camerademo.network;
 
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Created by shucc on 17/1/22.
- * cc@cchao.org
- * 统一返回bean类
- */
 public class HttpResult<T> {
 
     private int resultCode;

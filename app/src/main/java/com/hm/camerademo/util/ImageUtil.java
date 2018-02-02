@@ -11,11 +11,12 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.hm.camerademo.App;
+import com.hm.camerademo.R;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -27,9 +28,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import rx.Observable;
 import rx.Subscriber;
+
 
 /**
  * Created by dumingwei on 2017/1/5.
@@ -39,6 +42,9 @@ import rx.Subscriber;
  * 当要把一个ImageView 上的图片 存储到本地的时候，先使用质量压缩，再使用采样压缩。
  */
 public class ImageUtil {
+
+    private static final String TAG = "ImageUtil";
+    private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HH:mm:ss", Locale.CHINA);
 
     public ImageUtil() {
     }
@@ -50,6 +56,18 @@ public class ImageUtil {
                 .into(imageView);
     }
 
+    public static void loadLocalFile(Context context, ImageView imageView, String url) {
+        if (TextUtils.isEmpty(url)) {
+            imageView.setImageResource(R.mipmap.ic_launcher);
+            return;
+        }
+        Glide.with(context)
+                .load(new File(url))
+                .error(R.mipmap.ic_launcher)
+                .into(imageView);
+    }
+
+
     /**
      * 创建图片File对象
      *
@@ -57,23 +75,28 @@ public class ImageUtil {
      */
     public static File createImageFile() {
         File imageFile = null;
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String storagePath;
+        File storageDir;
+        String timeStamp = dateFormat.format(new Date());
         try {
-            if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
-                path.mkdirs();
-                imageFile = File.createTempFile(timeStamp, ".jpg", path);
-            } else {
-                imageFile = File.createTempFile(timeStamp, ".jpg", App.getInstance().getExternalFilesDir(null));
-            }
+            storagePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath() + File.separator + "camerademo";
+            //storagePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath() + File.separator + "camerademo";
+            //storagePath = App.getInstance().getExternalFilesDir(Environment.DIRECTORY_PICTURES).getAbsolutePath();
+            //storagePath = App.getInstance().getExternalCacheDir().getAbsolutePath() + File.separator + "camerademo";
+            //storagePath = App.getInstance().getFilesDir().getAbsolutePath() + File.separator + "images";
+            storageDir = new File(storagePath);
+            storageDir.mkdirs();
+            imageFile = File.createTempFile(timeStamp, ".jpg", storageDir);
+            Log.e(TAG, imageFile.getAbsolutePath());
         } catch (IOException e) {
+            Log.e(TAG, "error" + e.getMessage());
             e.printStackTrace();
         }
         return imageFile;
     }
 
 
-    public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId, int reqWidth, int reqHeight) {
+    public static Bitmap getSampledBitmapFromResource(Resources res, int resId, int reqWidth, int reqHeight) {
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -83,6 +106,10 @@ public class ImageUtil {
         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
         options.inJustDecodeBounds = false;
         return BitmapFactory.decodeResource(res, resId, options);
+    }
+
+    public static Bitmap getBitmapFromResource(Resources res, int resId) {
+        return BitmapFactory.decodeResource(res, resId);
     }
 
     /**
@@ -155,11 +182,13 @@ public class ImageUtil {
         // Raw height and width of image
         final int height = options.outHeight;
         final int width = options.outWidth;
+        Log.d(TAG, "options.outWidth=" + options.outWidth + ",options.outHeight=" + options.outHeight);
         int inSampleSize = 1;
 
         if (height > reqHeight || width > reqWidth) {
             final int halfHeight = height / 2;
             final int halfWidth = width / 2;
+            //计算压缩比，计算出的inSampleSize保证图片的宽和高都比要求的宽高大一点。
             // Calculate the largest inSampleSize value that is a power of 2 and keeps both
             // height and width larger than the requested height and width.
             while ((halfHeight / inSampleSize) >= reqHeight
@@ -183,8 +212,8 @@ public class ImageUtil {
         while (baos.toByteArray().length / 1024 > 200) {  //循环判断如果压缩后图片是否大于200kb,大于继续压缩
             baos.reset();//重置baos即清空baos
             //第一个参数 ：图片格式 ，第二个参数： 图片质量，100为最高，0为最差  ，第三个参数：保存压缩后的数据的流
-            image.compress(Bitmap.CompressFormat.JPEG, options, baos);//这里压缩options%，把压缩后的数据存放到baos中
             options -= 10;//每次都减少10
+            image.compress(Bitmap.CompressFormat.JPEG, options, baos);//这里压缩options%，把压缩后的数据存放到baos中
         }
         ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());//把压缩后的数据baos存放到ByteArrayInputStream中
         Bitmap bitmap = BitmapFactory.decodeStream(isBm, null, null);//把ByteArrayInputStream数据生成图片
@@ -227,7 +256,7 @@ public class ImageUtil {
      * @param context  上下文对象
      * @param bitmap   要存在
      * @param quantity 压缩质量
-     * @return
+     * @return 存储的压缩后的路径
      * @throws FileNotFoundException
      */
     public static String compressImage(Context context, Bitmap bitmap, int quantity) throws IOException {
@@ -236,7 +265,7 @@ public class ImageUtil {
         bitmap.compress(Bitmap.CompressFormat.JPEG, quantity, out);
         out.flush();
         out.close();
-        //TODO 还不能马上刷新
+        //通知媒体扫描器扫描文件
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
             Uri contentUri = Uri.fromFile(imageFile);

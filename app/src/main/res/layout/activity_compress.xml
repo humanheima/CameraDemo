@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data></data>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/img_large"
+            android:layout_width="200dp"
+            android:layout_height="140dp"
+            android:scaleType="centerCrop" />
+
+        <Button
+            android:id="@+id/btn_save_bitmap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/img_large"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="40dp"
+            android:onClick="saveBitmap"
+            android:text="把bitmap保存到本地"
+            android:textAllCaps="false" />
+
+    </RelativeLayout>
+</layout>
+
