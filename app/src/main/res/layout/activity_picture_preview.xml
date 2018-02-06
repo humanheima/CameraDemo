@@ -7,40 +7,60 @@
         android:fitsSystemWindows="true"
         android:orientation="vertical">
 
-        <View
+        <RelativeLayout
+            android:id="@+id/rl_top"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:background="#e0000000" />
+            android:background="#373c3d">
 
-        <TextView
-            android:id="@+id/text_cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:layout_marginLeft="8dp"
-            android:gravity="center"
-            android:text="取消"
-            android:textColor="@android:color/white"
-            android:textSize="16sp" />
+            <ImageView
+                android:id="@+id/img_back"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="8dp"
+                android:onClick="click"
+                android:src="@drawable/ic_back" />
 
-        <TextView
-            android:id="@+id/text_complete"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="8dp"
-            android:gravity="center"
-            android:text="完成"
-            android:textColor="@android:color/white"
-            android:textSize="16sp" />
+            <View
+                android:id="@+id/view_split_back"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="12dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="12dp"
+                android:layout_toRightOf="@+id/img_back"
+                android:background="@android:color/black" />
 
-        <TextView
-            android:id="@+id/text_number"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:layout_centerHorizontal="true"
-            android:gravity="center"
-            android:textColor="@android:color/white"
-            android:textSize="16sp" />
+            <TextView
+                android:id="@+id/tv_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="12dp"
+                android:layout_toRightOf="@+id/view_split_back"
+                android:text="@string/all_images"
+                android:textColor="@android:color/white"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tv_confirm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="16dp"
+                android:background="@drawable/bg_choose"
+                android:enabled="false"
+                android:onClick="click"
+                android:paddingBottom="6dp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:paddingTop="6dp"
+                android:text="@string/send"
+                android:textColor="@android:color/white" />
+
+        </RelativeLayout>
 
         <com.hm.camerademo.ui.widget.zoom.ViewPagerFixed
             android:id="@+id/viewPagerFixed"
@@ -50,13 +70,54 @@
             android:layout_marginTop="48dp"
             android:background="#000000" />
 
-        <Button
-            android:id="@+id/btn_delete"
+        <LinearLayout
+            android:id="@+id/ll_rv"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_above="@+id/rl_bottom"
+            android:background="#252525"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv"
+                android:layout_width="match_parent"
+                android:layout_height="80dp">
+
+            </android.support.v7.widget.RecyclerView>
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_bottom"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_alignParentBottom="true"
-            android:text="删除"
-            android:textSize="18sp" />
+            android:background="#373c3d">
+
+            <ImageView
+                android:id="@+id/img_check"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/tv_choose" />
+
+            <TextView
+                android:id="@+id/tv_choose"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="16dp"
+                android:enabled="false"
+                android:onClick="click"
+                android:text="@string/choose"
+                android:textColor="@android:color/white"
+                android:textSize="16sp" />
+
+        </RelativeLayout>
+
 
     </RelativeLayout>
+
 </layout>

@@ -2,39 +2,45 @@ package com.hm.camerademo.ui.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 
 import com.hm.camerademo.R;
 import com.hm.camerademo.databinding.ActivityPicturePreviewBinding;
+import com.hm.camerademo.listener.OnItemClickListener;
+import com.hm.camerademo.ui.adapter.ImagePagerAdapter;
+import com.hm.camerademo.ui.adapter.PreviewRvAdapter;
 import com.hm.camerademo.ui.base.BaseActivity;
-import com.hm.camerademo.ui.fragment.ImagePreviewFragment;
-import com.hm.camerademo.util.ListUtil;
+import com.hm.camerademo.util.localImages.ImageItem;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 1 .只预览已经选择的图片 可以取消选择
+ */
+
 public class PicturePreviewActivity extends BaseActivity<ActivityPicturePreviewBinding> {
 
+    //是否是确定发送还是按返回键返回了
+    public static final String PREVIEW_CONFIRM = "PREVIEW_CONFIRM";
+
+    private static final int MAX_COUNT = 9;//图片选择的最大数量
     private static final String KEY_POSITION = "key_position";
+    public static final String SELECTED_COUNT = "SELECTED_COUNT";
 
-    private List<String> imageSelect;
-    private List<String> imageSelectTemp;
+    private List<ImageItem> selectedList;
+    private int selectedCount;
+    private int initialSelectedCount;
+    private PreviewRvAdapter previewRvAdapter;
 
-    private ImagePagerAdapter imagePagerAdapter;
-
-    private int initPosition = 0;
-
-    private int maxImagesSize = 0;
-
-    public static void launch(Activity context, List<String> list, int position) {
+    public static void launch(Activity context, List<ImageItem> selectedList, int position, int selectedCount) {
         Intent intent = new Intent(context, PicturePreviewActivity.class);
-        intent.putExtra(PictureSelectActivity.IMAGE_LIST, (Serializable) list);
+        intent.putExtra(PictureSelectActivity.IMAGE_LIST, (Serializable) selectedList);
         intent.putExtra(KEY_POSITION, position);
+        intent.putExtra(SELECTED_COUNT, selectedCount);
         context.startActivityForResult(intent, MultiPhotoActivity.IMAGE_PREVIEW);
     }
 
@@ -45,79 +51,121 @@ public class PicturePreviewActivity extends BaseActivity<ActivityPicturePreviewB
 
     @Override
     protected void initData() {
-        imageSelectTemp = new ArrayList<>();
-        imageSelect = (List<String>) getIntent().getSerializableExtra(PictureSelectActivity.IMAGE_LIST);
-        initPosition = getIntent().getIntExtra(KEY_POSITION, 0);
-        imageSelectTemp.addAll(imageSelect);
+        selectedList = (List<ImageItem>) getIntent().getSerializableExtra(PictureSelectActivity.IMAGE_LIST);
+        int initPosition = getIntent().getIntExtra(KEY_POSITION, 0);
+        initialSelectedCount = selectedList.size();
+        selectedCount = initialSelectedCount;
+        viewBind.tvNumber.setText(getString(R.string.count_format, initPosition + 1, initialSelectedCount));
+        changeBtnStatus(selectedCount);
+        initViewPagerAdapter(initPosition);
+        initRecyclerViewAdapter();
+        changeSelected(0);
+    }
 
-        maxImagesSize = imageSelect.size();
-        viewBind.textNumber.setText(String.valueOf(initPosition + 1).concat("/").concat(String.valueOf(maxImagesSize)));
-
-        imagePagerAdapter = new ImagePagerAdapter(getSupportFragmentManager(), (ArrayList<String>) imageSelect, true);
+    private void initViewPagerAdapter(int initPosition) {
+        ImagePagerAdapter imagePagerAdapter = new ImagePagerAdapter(getSupportFragmentManager(), selectedList, true);
         viewBind.viewPagerFixed.setAdapter(imagePagerAdapter);
-        // 更新下标
+        viewBind.viewPagerFixed.setCurrentItem(initPosition);
+    }
+
+    private void initRecyclerViewAdapter() {
+        //第一个设置为正在预览
+        selectedList.get(0).setPreview(true);
+        viewBind.rv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        previewRvAdapter = new PreviewRvAdapter(this, selectedList);
+        viewBind.rv.setAdapter(previewRvAdapter);
+        previewRvAdapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                viewBind.viewPagerFixed.setCurrentItem(position);
+            }
+        });
+    }
+
+    @Override
+    protected void bindEvent() {
         viewBind.viewPagerFixed.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
-                viewBind.textNumber.setText(String.valueOf(position + 1).concat("/").concat(String.valueOf(maxImagesSize)));
-            }
-        });
-
-        viewBind.viewPagerFixed.setCurrentItem(initPosition);
-        viewBind.textCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-        viewBind.textComplete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.putExtra(PictureSelectActivity.IMAGE_LIST, (Serializable) imageSelect);
-                setResult(MultiPhotoActivity.IMAGE_PREVIEW_OK, intent);
-                finish();
-            }
-        });
-        viewBind.btnDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int current = viewBind.viewPagerFixed.getCurrentItem();
-                if (!ListUtil.isEmpty(imageSelect)) {
-                    imageSelectTemp.remove(imageSelect.get(current));
-                    imageSelect.clear();
-                    imageSelect.addAll(imageSelectTemp);
-                    imagePagerAdapter = new ImagePagerAdapter(getSupportFragmentManager(), (ArrayList<String>) imageSelect, true);
-                    viewBind.viewPagerFixed.setAdapter(imagePagerAdapter);
-                    viewBind.viewPagerFixed.setCurrentItem(current >= imageSelect.size() ? imageSelect.size() : current);
-                    maxImagesSize = imageSelect.size();
-                    viewBind.textNumber.setText(String.valueOf(current == maxImagesSize ? current : current + 1).concat("/").concat(String.valueOf(maxImagesSize)));
+                viewBind.tvNumber.setText(String.valueOf(position + 1).concat("/").concat(String.valueOf(initialSelectedCount)));
+                changeSelected(position);
+                for (int i = 0; i < selectedList.size(); i++) {
+                    selectedList.get(i).setPreview(false);
                 }
+                selectedList.get(position).setPreview(true);
+                previewRvAdapter.notifyDataSetChanged();
+                viewBind.rv.scrollToPosition(position);
+            }
+        });
+        viewBind.imgBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                confirmOrBack(false);
+            }
+        });
+        viewBind.tvConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               confirmOrBack(true);
+            }
+        });
+        viewBind.imgCheck.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = viewBind.viewPagerFixed.getCurrentItem();
+                if (selectedList.get(position).isSelected()) {
+                    selectedList.get(position).setSelected(false);
+                    changeSelected(position);
+                    selectedCount--;
+                    changeBtnStatus(selectedCount);
+                } else {
+                    selectedList.get(position).setSelected(true);
+                    changeSelected(position);
+                    selectedCount++;
+                    changeBtnStatus(selectedCount);
+                }
+                previewRvAdapter.notifyItemChanged(position);
+
             }
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        confirmOrBack(false);
+    }
 
-    private class ImagePagerAdapter extends FragmentStatePagerAdapter {
-
-        public ArrayList<String> fileList;
-        private boolean isLocalImage = false;
-
-        public ImagePagerAdapter(FragmentManager fm, ArrayList<String> fileList, boolean isLocalImage) {
-            super(fm);
-            this.fileList = fileList;
-            this.isLocalImage = isLocalImage;
+    private void confirmOrBack(boolean confirm) {
+        List<ImageItem> backList = new ArrayList<>();
+        for (ImageItem imageItem : selectedList) {
+            if (imageItem.isSelected()) {
+                backList.add(imageItem);
+            }
         }
+        Intent intent = new Intent();
+        intent.putExtra(PictureSelectActivity.IMAGE_LIST, (Serializable) backList);
+        //按返回键返回
+        intent.putExtra(PREVIEW_CONFIRM, confirm);
+        setResult(MultiPhotoActivity.IMAGE_PREVIEW_OK, intent);
+        finish();
+    }
 
-        @Override
-        public int getCount() {
-            return fileList == null ? 0 : fileList.size();
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            String url = fileList.get(position);
-            return ImagePreviewFragment.newInstance(url, isLocalImage);
+    private void changeSelected(int position) {
+        if (selectedList.get(position).isSelected()) {
+            viewBind.imgCheck.setImageResource(R.drawable.ic_pictures_selected);
+        } else {
+            viewBind.imgCheck.setImageResource(R.drawable.ic_picture_unselected);
         }
     }
+
+    private void changeBtnStatus(int count) {
+        if (count > 0) {
+            viewBind.tvConfirm.setEnabled(true);
+            viewBind.tvConfirm.setText(getString(R.string.send_count_format, count, MAX_COUNT));
+        } else {
+            viewBind.tvConfirm.setEnabled(false);
+            viewBind.tvConfirm.setText(getString(R.string.send));
+        }
+    }
+
 }

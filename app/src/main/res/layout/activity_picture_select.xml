@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:tools="http://schemas.android.com/tools">
 
     <data></data>
 
@@ -8,61 +8,122 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
 
+        <RelativeLayout
+            android:id="@+id/rl_top"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="#373c3d">
+
+            <ImageView
+                android:id="@+id/img_back"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="8dp"
+                android:onClick="click"
+                android:src="@drawable/ic_back" />
+
+            <View
+                android:id="@+id/view_split_back"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="12dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="12dp"
+                android:layout_toRightOf="@+id/img_back"
+                android:background="@android:color/black" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="12dp"
+                android:layout_toRightOf="@+id/view_split_back"
+                android:text="@string/all_images"
+                android:textColor="@android:color/white"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tv_confirm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="16dp"
+                android:background="@drawable/bg_choose"
+                android:enabled="false"
+                android:onClick="click"
+                android:paddingBottom="6dp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:paddingTop="6dp"
+                android:text="@string/send"
+                android:textColor="@android:color/white" />
+
+        </RelativeLayout>
+
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerView"
+            android:id="@+id/rv_images"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="48dp" />
+            android:layout_above="@+id/rl_bottom"
+            android:layout_below="@+id/rl_top" />
 
-        <View
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_bucket"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignBottom="@+id/rv_images"
+            android:layout_alignTop="@+id/rv_images"
+            android:layout_marginTop="80dp"
+            android:background="@android:color/white" />
+
+        <RelativeLayout
+            android:id="@+id/rl_bottom"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_alignParentBottom="true"
-            android:background="#e0000000" />
+            android:background="#373c3d">
 
-        <Button
-            android:id="@+id/btn_complete"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:background="@android:color/black"
-            android:onClick="onClick"
-            android:text="完成"
-            android:textColor="@android:color/white"
-            android:textSize="20sp" />
+            <LinearLayout
+                android:id="@+id/ll_bucket"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:onClick="click">
 
-        <TextView
-            android:id="@+id/text_default"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginRight="8dp"
-            android:layout_toLeftOf="@+id/btn_complete"
-            android:gravity="center"
-            android:textColor="@android:color/white"
-            android:textSize="16sp" />
+                <TextView
+                    android:id="@+id/tv_bucket"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:text="@string/all_images"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp" />
 
-        <TextView
-            android:id="@+id/text_number"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:layout_alignParentBottom="true"
-            android:layout_toLeftOf="@+id/text_default"
-            android:gravity="center"
-            android:text="0"
-            android:textColor="@android:color/white"
-            android:textSize="16sp" />
+                <ImageView
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:layout_marginLeft="2dp"
+                    android:src="@drawable/ic_bucket_indicator" />
 
-        <TextView
-            android:id="@+id/text_max_image_size"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginLeft="8dp"
-            android:gravity="center"
-            android:textColor="@android:color/white"
-            android:textSize="16sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_preview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="16dp"
+                android:enabled="false"
+                android:onClick="click"
+                android:text="@string/preview"
+                android:textColor="@android:color/white"
+                android:textSize="16sp" />
+
+        </RelativeLayout>
 
     </RelativeLayout>
+
 </layout>

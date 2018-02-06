@@ -25,9 +25,14 @@ public class PictureSelectAdapter extends RecyclerView.Adapter<PictureSelectAdap
     private Context context;
     private List<ImageItem> imageLocal;
     private OnItemClickListener onItemClickListener;
+    private OnPreviewListener onPreviewListener;
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
+    }
+
+    public void setOnPreviewListener(OnPreviewListener onPreviewListener) {
+        this.onPreviewListener = onPreviewListener;
     }
 
     public PictureSelectAdapter(List<ImageItem> imageLocal) {
@@ -50,10 +55,18 @@ public class PictureSelectAdapter extends RecyclerView.Adapter<PictureSelectAdap
     public void onBindViewHolder(final PictureSelectHolder holder, int position) {
         ImageItem item = imageLocal.get(position);
         if (onItemClickListener != null) {
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
+            holder.getBinding().imgSelect.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     onItemClickListener.onItemClick(v, holder.getAdapterPosition());
+                }
+            });
+        }
+        if (onPreviewListener != null) {
+            holder.getBinding().imgLocal.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onPreviewListener.preview(holder.getAdapterPosition());
                 }
             });
         }
@@ -70,6 +83,11 @@ public class PictureSelectAdapter extends RecyclerView.Adapter<PictureSelectAdap
     @Override
     public int getItemCount() {
         return imageLocal.size();
+    }
+
+    public interface OnPreviewListener {
+
+        void preview(int position);
     }
 
     public class PictureSelectHolder extends RecyclerView.ViewHolder {

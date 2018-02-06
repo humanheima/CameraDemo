@@ -1,8 +1,12 @@
 package com.hm.camerademo.ui.activity;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -10,9 +14,9 @@ import android.widget.Toast;
 import com.hm.camerademo.R;
 import com.hm.camerademo.databinding.ActivityPictureSelectBinding;
 import com.hm.camerademo.listener.OnItemClickListener;
+import com.hm.camerademo.ui.adapter.BucketAdapter;
 import com.hm.camerademo.ui.adapter.PictureSelectAdapter;
 import com.hm.camerademo.ui.base.BaseActivity;
-import com.hm.camerademo.util.ListUtil;
 import com.hm.camerademo.util.localImages.ImageBucket;
 import com.hm.camerademo.util.localImages.ImageItem;
 import com.hm.camerademo.util.localImages.LocalImagesUtil;
@@ -20,32 +24,32 @@ import com.hm.camerademo.util.localImages.LocalImagesUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 public class PictureSelectActivity extends BaseActivity<ActivityPictureSelectBinding> {
 
     private final String TAG = getClass().getSimpleName();
     public static final String IMAGE_LIST = "image_list";
-    public static final String IMAGE_MAX_NUM = "image_max_num";
 
-    private List<String> selectedList;//前一个界面已经选中的图片的地址
-    private int maxImageNum;//图片选择的最大数量
-    private int selectCount;//前一个界面已经选择的数量
-    private List<ImageItem> imageLocal;//本地所有的图片
-    private List<String> imageNotShow;//选择的非本地图片
+    private static final int MAX_COUNT = 9;//图片选择的最大数量
+    private List<ImageItem> selectedList;//用来保存选中的图片
+    private int selectedCount;//选中的图片的数量
+    private List<ImageItem> imageLocal;//界面显示的所有图片
     private PictureSelectAdapter adapter;
 
-    public static void launch(Activity context, List<String> list, int maxNum) {
+    private BucketAdapter bucketAdapter;
+    private List<ImageBucket> bucketList;
+    private boolean bucketOpened;
+
+    private List<ImageItem> allImages;
+
+    public static void launch(Activity context) {
         Intent intent = new Intent(context, PictureSelectActivity.class);
-        intent.putExtra(IMAGE_LIST, (Serializable) list);
-        intent.putExtra(IMAGE_MAX_NUM, maxNum);
         context.startActivityForResult(intent, MultiPhotoActivity.CHOOSE_MULTI_IMAGE);
     }
 
@@ -56,13 +60,12 @@ public class PictureSelectActivity extends BaseActivity<ActivityPictureSelectBin
 
     @Override
     protected void initData() {
-        selectedList = (List<String>) getIntent().getSerializableExtra(IMAGE_LIST);
-        maxImageNum = getIntent().getIntExtra(IMAGE_MAX_NUM, 0);
-        imageNotShow = new ArrayList<>();
-        viewBind.textDefault.setText("/".concat(String.valueOf(maxImageNum).concat("张")));
-        selectCount = selectedList.size();
+        selectedList = new ArrayList<>();
         imageLocal = new ArrayList<>();
+        bucketList = new ArrayList<>();
+        allImages = new ArrayList<>();
         initRv();
+        initBuckets();
         Observable.create(new Observable.OnSubscribe<List<ImageBucket>>() {
             @Override
             public void call(Subscriber<? super List<ImageBucket>> subscriber) {
@@ -86,90 +89,203 @@ public class PictureSelectActivity extends BaseActivity<ActivityPictureSelectBin
 
                     @Override
                     public void onNext(List<ImageBucket> imageBuckets) {
-                        showData(imageBuckets.get(0));
+                        processData(imageBuckets);
                     }
                 });
     }
 
-    private void showData(ImageBucket imageBucket) {
+    private void initBuckets() {
+        viewBind.rvBucket.setLayoutManager(new LinearLayoutManager(this));
+        bucketAdapter = new BucketAdapter(this, bucketList);
+        viewBind.rvBucket.setAdapter(bucketAdapter);
+        bucketAdapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                for (int i = 0; i < bucketList.size(); i++) {
+                    bucketList.get(i).setSelected(false);
+                }
+                bucketList.get(position).setSelected(true);
+                bucketAdapter.notifyDataSetChanged();
+                showImages(bucketList.get(position));
+                closeBucket();
+            }
+        });
+        viewBind.rvBucket.post(new Runnable() {
+            @Override
+            public void run() {
+                viewBind.rvBucket.setTranslationY(viewBind.rvBucket.getHeight());
+                viewBind.rvBucket.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private void processData(List<ImageBucket> imageBuckets) {
+        this.bucketList.addAll(imageBuckets);
+        showImages(bucketList.get(0));
+        bucketAdapter.notifyDataSetChanged();
+        for (ImageBucket bucket : bucketList) {
+            allImages.addAll(bucket.getImageList());
+        }
+    }
+
+    private void showImages(ImageBucket imageBucket) {
         imageLocal.clear();
-        imageLocal.addAll(imageBucket.imageList);
-        viewBind.textMaxImageSize.setText(String.format(Locale.CHINA, "所有图片 %d张", imageLocal.size()));
-        //统计前一个界面显示的非本地的图片(比如从网络上加载的图片)
-        if (!ListUtil.isEmpty(selectedList)) {
-            for (String path : selectedList) {
-                boolean isLocalImage = false;
-                for (ImageItem imageItem : imageLocal) {
-                    if (imageItem.getImagePath().equals(path)) {
-                        isLocalImage = true;
-                        break;
-                    }
-                }
-                if (!isLocalImage) {
-                    imageNotShow.add(path);
-                }
-            }
-        }
-        //统计前一个界面显示的本地的图片
-        if (!ListUtil.isEmpty(selectedList)) {
-            for (String imagePath : selectedList) {
-                for (int i = 0; i < imageLocal.size(); i++) {
-                    ImageItem item = imageLocal.get(i);
-                    if (imagePath.equals(item.getImagePath())) {
-                        item.setSelected(true);
-                        imageLocal.set(i, item);
-                        break;
-                    }
-                }
-            }
-        }
-        viewBind.textNumber.setText(String.valueOf(selectCount));
+        imageLocal.addAll(imageBucket.getImageList());
         adapter.notifyDataSetChanged();
+        viewBind.tvBucket.setText(imageBucket.getBucketName());
     }
 
     private void initRv() {
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(PictureSelectActivity.this, 3);
-        gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
-        viewBind.recyclerView.setLayoutManager(gridLayoutManager);
+        viewBind.rvImages.setLayoutManager(new GridLayoutManager(PictureSelectActivity.this, 3));
         adapter = new PictureSelectAdapter(imageLocal);
-        viewBind.recyclerView.setAdapter(adapter);
+        viewBind.rvImages.setAdapter(adapter);
         adapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 //图片数目已经达到maxImageCount
                 ImageItem item = imageLocal.get(position);
-                if (selectCount >= maxImageNum && !item.isSelected()) {
+                if (selectedCount >= MAX_COUNT && !item.isSelected()) {
                     Toast.makeText(PictureSelectActivity.this,
-                            String.format(getString(R.string.max_image_size), maxImageNum),
+                            String.format(getString(R.string.max_image_size), MAX_COUNT),
                             Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (item.isSelected()) {
-                    selectCount--;
+                    selectedCount--;
+                    for (int i = 0; i < selectedList.size(); i++) {
+                        ImageItem imageItem = selectedList.get(i);
+                        if (imageItem.getImagePath().equals(item.getImagePath())) {
+                            selectedList.remove(imageItem);
+                            break;
+                        }
+                    }
+                    // TODO: 2018/2/6 0006 错误代码 在遍历过程中不能删除，too young too simple ，sometimes naive
+                    /*for (ImageItem imageItem : selectedList) {
+                        if (imageItem.getImagePath().equals(item.getImagePath())) {
+                            selectedList.remove(imageItem);
+                        }
+                    }*/
                 } else {
-                    selectCount++;
+                    selectedCount++;
+                    selectedList.add(item);
                 }
                 item.setSelected(!item.isSelected());
                 imageLocal.set(position, item);
-                viewBind.textNumber.setText(String.valueOf(selectCount));
                 adapter.notifyItemChanged(position);
+                changeBtnStatus();
             }
         });
     }
 
-    public void onClick(View view) {
-        List<String> images = new ArrayList<>();
-        if (!ListUtil.isEmpty(imageNotShow)) {
-            images.addAll(imageNotShow);
+    private void changeBtnStatus() {
+        if (selectedCount > 0) {
+            viewBind.tvConfirm.setEnabled(true);
+            viewBind.tvConfirm.setText(getString(R.string.send_count_format, selectedCount, MAX_COUNT));
+            viewBind.tvPreview.setEnabled(true);
+            viewBind.tvPreview.setText(getString(R.string.preview_count_format, selectedCount));
+        } else {
+            viewBind.tvConfirm.setEnabled(false);
+            viewBind.tvConfirm.setText(getString(R.string.send));
+            viewBind.tvPreview.setEnabled(false);
+            viewBind.tvPreview.setText(getString(R.string.preview));
         }
-        for (int i = 0; i < imageLocal.size(); i++) {
-            ImageItem imageItem = imageLocal.get(i);
-            if (imageItem.isSelected()) {
-                images.add(imageItem.getImagePath());
+    }
+
+    /**
+     * 弹出文件夹列表
+     */
+    private void openBucket() {
+        if (!bucketOpened) {
+            Log.e(TAG, "openBucket: ");
+            ObjectAnimator animator = ObjectAnimator.ofFloat(viewBind.rvBucket, "translationY",
+                    viewBind.rvBucket.getHeight(), 0).setDuration(300);
+            animator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    super.onAnimationStart(animation);
+                    viewBind.rvBucket.setVisibility(View.VISIBLE);
+                }
+            });
+            animator.start();
+            bucketOpened = true;
+        }
+    }
+
+    /**
+     * 收起文件夹列表
+     */
+    private void closeBucket() {
+        if (bucketOpened) {
+            Log.e(TAG, "closeBucket: ");
+            ObjectAnimator animator = ObjectAnimator.ofFloat(viewBind.rvBucket, "translationY",
+                    0, viewBind.rvBucket.getHeight()).setDuration(300);
+            animator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    viewBind.rvBucket.setVisibility(View.GONE);
+                }
+            });
+            animator.start();
+            bucketOpened = false;
+        }
+    }
+
+    public void click(View view) {
+        switch (view.getId()) {
+            case R.id.img_back:
+                finish();
+                break;
+            case R.id.tv_confirm:
+                confirm();
+                break;
+            case R.id.ll_bucket:
+                if (bucketOpened) {
+                    closeBucket();
+                } else {
+                    openBucket();
+                }
+                break;
+            case R.id.tv_preview:
+                PicturePreviewActivity.launch(this, selectedList, 0, selectedCount);
+                break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == MultiPhotoActivity.IMAGE_PREVIEW) {
+            if (resultCode == MultiPhotoActivity.IMAGE_PREVIEW_OK) {
+                boolean confirm = data.getBooleanExtra(PicturePreviewActivity.PREVIEW_CONFIRM, false);
+                if (confirm) {
+                    selectedList = (List<ImageItem>) data.getSerializableExtra(PictureSelectActivity.IMAGE_LIST);
+                    confirm();
+                } else {
+                    //更新当前界面
+                    selectedList = (List<ImageItem>) data.getSerializableExtra(PictureSelectActivity.IMAGE_LIST);
+                    selectedCount = selectedList.size();
+                    for (int i = 0; i < imageLocal.size(); i++) {
+                        imageLocal.get(i).setSelected(false);
+                    }
+                    for (ImageItem imageItem : selectedList) {
+                        for (int i = 0; i < imageLocal.size(); i++) {
+                            if (imageItem.getImagePath().equals(imageLocal.get(i).getImagePath())) {
+                                imageLocal.get(i).setSelected(true);
+                                break;
+                            }
+                        }
+                    }
+                    adapter.notifyDataSetChanged();
+                    changeBtnStatus();
+                }
             }
         }
+    }
+
+    private void confirm() {
         Intent intent = new Intent();
-        intent.putExtra(IMAGE_LIST, (Serializable) images);
+        intent.putExtra(IMAGE_LIST, (Serializable) selectedList);
         setResult(MultiPhotoActivity.CHOOSE_MULTI_IMAGE_OK, intent);
         finish();
     }

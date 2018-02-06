@@ -55,9 +55,9 @@ public class LocalImagesUtil {
             cur.close();
         }
         ImageBucket bucket = new ImageBucket();
-        bucket.count = imageItems.size();
-        bucket.bucketName = "所有图片";
-        bucket.imageList = imageItems;
+        bucket.setCount(imageItems.size());
+        bucket.setBucketName("所有图片");
+        bucket.setImageList(imageItems);
         return bucket;
     }
 
@@ -89,33 +89,36 @@ public class LocalImagesUtil {
                 ImageBucket bucket = bucketMap.get(bucketId);
                 if (bucket == null) {
                     bucket = new ImageBucket();
+                    bucket.setSelected(false);
                     bucketMap.put(bucketId, bucket);
-                    bucket.imageList = new ArrayList<>();
-                    bucket.bucketName = bucketName;
+                    bucket.setImageList(new ArrayList<ImageItem>());
+                    bucket.setBucketName(bucketName);
                 }
                 ImageItem imageItem = new ImageItem();
                 imageItem.setId(_id);
                 imageItem.setTime(time);
                 imageItem.setImagePath(path);
-                bucket.imageList.add(imageItem);
+                bucket.getImageList().add(imageItem);
+                bucket.setCount(bucket.getImageList().size());
             }
             cur.close();
             List<ImageBucket> bucketList = new ArrayList<>();
             //所有图片
             ImageBucket allBucket = new ImageBucket();
-            allBucket.bucketName = "所有图片";
+            allBucket.setSelected(true);
+            allBucket.setBucketName("所有图片");
             int allCount;
             List<ImageItem> allList = new ArrayList<>();
             for (Map.Entry<String, ImageBucket> entry : bucketMap.entrySet()) {
                 ImageBucket bucket = entry.getValue();
-                Collections.sort(bucket.imageList);
-                allList.addAll(bucket.imageList);
+                Collections.sort(bucket.getImageList());
+                allList.addAll(bucket.getImageList());
                 bucketList.add(bucket);
             }
             allCount = allList.size();
-            allBucket.count = allCount;
+            allBucket.setCount(allCount);
             Collections.sort(allList);
-            allBucket.imageList = allList;
+            allBucket.setImageList(allList);
             bucketList.add(0, allBucket);
             return bucketList;
         } else {
