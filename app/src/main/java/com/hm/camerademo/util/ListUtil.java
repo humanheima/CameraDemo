@@ -6,7 +6,7 @@ public class ListUtil {
     private ListUtil() {}
 
     public static boolean isEmpty(List<?> data) {
-        if (data == null || data.size() == 0) {
+        if (data == null || data.isEmpty()) {
             return true;
         }
         return false;

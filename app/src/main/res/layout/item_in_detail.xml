@@ -1,20 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.hm.camerademo.ui.widget.ScaleRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<layout>
 
-    <ImageView
-        android:id="@+id/item_img_book"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop" />
+    <data>
 
-    <ImageView
-        android:id="@+id/item_add_img"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        app:srcCompat="@drawable/ic_add_image" />
+        <variable
+            name="item"
+            type="com.hm.camerademo.util.localImages.ImageItem" />
+    </data>
 
-</com.hm.camerademo.ui.widget.ScaleRelativeLayout>
+    <com.hm.camerademo.ui.widget.ScaleRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="100dp"
+        android:layout_height="100dp">
+
+        <ImageView
+            android:id="@+id/item_img_book"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop" />
+
+        <ImageView
+            android:id="@+id/item_add_img"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_add_image" />
+
+    </com.hm.camerademo.ui.widget.ScaleRelativeLayout>
+
+</layout>

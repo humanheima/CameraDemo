@@ -24,7 +24,7 @@
         </activity>
         <activity android:name=".ui.activity.MultiPhotoActivity"/>
         <activity android:name=".ui.activity.PictureSelectActivity"/>
-        <activity android:name=".ui.activity.PicturePreviewActivity"/>
+        <activity android:name=".ui.activity.PreviewActivity"/>
         <activity android:name=".ui.activity.XAActivity"/>
         <activity android:name=".ui.activity.FakeActivity"/>
         <activity

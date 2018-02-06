@@ -1,94 +1,45 @@
 package com.hm.camerademo.ui.adapter;
 
 import android.content.Context;
+import android.databinding.DataBindingUtil;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 
 import com.hm.camerademo.R;
+import com.hm.camerademo.databinding.ItemInDetailBinding;
 import com.hm.camerademo.util.ImageUtil;
+import com.hm.camerademo.util.localImages.ImageItem;
 
 import java.util.List;
 
-public class ImageAdapter extends ArrayAdapter<String> {
+public class ImageAdapter extends RecyclerView.Adapter<BindingViewHolder> {
 
-    private final int maxCount;
     private Context context;
-    private int resource;
-    private List<String> stringList;
-    private OnAddImageListener onAddImageListener;
+    private List<ImageItem> data;
 
-    public void setOnAddImageListener(OnAddImageListener onAddImageListener) {
-        this.onAddImageListener = onAddImageListener;
-    }
-
-    public ImageAdapter(Context context, int resource, List<String> objects,int maxCount) {
-        super(context, resource, objects);
+    public ImageAdapter(Context context, List<ImageItem> data) {
         this.context = context;
-        this.resource = resource;
-        this.stringList = objects;
-        this.maxCount=maxCount;
+        this.data = data;
     }
 
     @Override
-    public int getCount() {
-        if (stringList.size() < maxCount) {
-            return stringList.size() + 1;
-        } else {
-            return stringList.size();
-        }
+    public BindingViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        ItemInDetailBinding binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()),
+                R.layout.item_in_detail, parent, false);
+        BindingViewHolder<ItemInDetailBinding> holder = new BindingViewHolder<>(binding);
+        return holder;
     }
 
     @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
-        final OutDetailHolder holder;
-        if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(resource, parent, false);
-            holder = new OutDetailHolder();
-            holder.imageView = convertView.findViewById(R.id.item_img_book);
-            holder.imageViewAdd = convertView.findViewById(R.id.item_add_img);
-            convertView.setTag(holder);
-        } else {
-            holder = (OutDetailHolder) convertView.getTag();
-        }
-        if (position == stringList.size() && position < maxCount) {
-            holder.imageViewAdd.setVisibility(View.VISIBLE);
-            holder.imageView.setVisibility(View.GONE);
-            if (onAddImageListener != null) {
-                holder.imageViewAdd.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        onAddImageListener.openSelect(v);
-                    }
-                });
-            }
-        } else {
-            holder.imageViewAdd.setVisibility(View.GONE);
-            holder.imageView.setVisibility(View.VISIBLE);
-            ImageUtil.load(context, stringList.get(position), holder.imageView);
-            if (onAddImageListener != null) {
-                holder.imageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        onAddImageListener.openShowImage(position);
-                    }
-                });
-            }
-        }
-        return convertView;
+    public void onBindViewHolder(BindingViewHolder holder, int position) {
+        ImageItem imageItem = data.get(position);
+        ImageUtil.loadLocalFile(context, ((ItemInDetailBinding) holder.getBinding()).itemImgBook, imageItem.getImagePath());
     }
 
-    private class OutDetailHolder {
-        private ImageView imageView;
-        private ImageView imageViewAdd;
+    @Override
+    public int getItemCount() {
+        return data.size();
     }
 
-    public interface OnAddImageListener {
-
-        void openSelect(View view);
-
-        void openShowImage(int position);
-    }
 }

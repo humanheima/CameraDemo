@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools">
-
-    <data></data>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        android:orientation="vertical">
 
         <RelativeLayout
             android:id="@+id/rl_top"
@@ -34,6 +33,7 @@
                 android:background="@android:color/black" />
 
             <TextView
+                android:id="@+id/tv_number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
@@ -62,21 +62,31 @@
 
         </RelativeLayout>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_images"
+        <com.hm.camerademo.ui.widget.zoom.ViewPagerFixed
+            android:id="@+id/viewPagerFixed"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/rl_bottom"
-            android:layout_below="@+id/rl_top" />
+            android:layout_marginBottom="48dp"
+            android:layout_marginTop="48dp"
+            android:background="#000000" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_bucket"
+        <LinearLayout
+            android:id="@+id/ll_rv"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignBottom="@+id/rv_images"
-            android:layout_alignTop="@+id/rv_images"
-            android:layout_marginTop="80dp"
-            android:background="@android:color/white" />
+            android:layout_height="100dp"
+            android:layout_above="@+id/rl_bottom"
+            android:background="#252525"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv"
+                android:layout_width="match_parent"
+                android:layout_height="80dp">
+
+            </android.support.v7.widget.RecyclerView>
+
+        </LinearLayout>
 
         <RelativeLayout
             android:id="@+id/rl_bottom"
@@ -86,41 +96,30 @@
             android:background="#373c3d">
 
             <LinearLayout
-                android:id="@+id/ll_bucket"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:onClick="click">
-
-                <TextView
-                    android:id="@+id/tv_bucket"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:text="@string/all_images"
-                    android:textColor="@android:color/white"
-                    android:textSize="16sp" />
-
-                <ImageView
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
-                    android:layout_marginLeft="2dp"
-                    android:src="@drawable/ic_bucket_indicator" />
-
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/tv_preview"
+                android:id="@+id/ll_check"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="16dp"
-                android:enabled="false"
-                android:onClick="click"
-                android:text="@string/preview"
-                android:textColor="@android:color/white"
-                android:textSize="16sp" />
+                android:layout_marginRight="12dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/img_check"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_picture_unselected" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:onClick="click"
+                    android:text="@string/choose"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
 
         </RelativeLayout>
 

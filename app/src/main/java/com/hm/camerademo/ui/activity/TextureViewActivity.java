@@ -55,6 +55,6 @@ public class TextureViewActivity extends AppCompatActivity implements TextureVie
 
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-        // Invoked every time there's a new Camera preview frame
+        // Invoked every time there's a new Camera onPreview frame
     }
 }
