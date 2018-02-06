@@ -3,7 +3,6 @@ package com.hm.camerademo.ui.adapter;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +20,6 @@ import java.util.List;
  */
 
 public class PreviewRvAdapter extends RecyclerView.Adapter<PreviewRvAdapter.PreviewViewHolder> {
-
 
     private final String TAG = getClass().getName();
 
@@ -58,8 +56,7 @@ public class PreviewRvAdapter extends RecyclerView.Adapter<PreviewRvAdapter.Prev
     @Override
     public void onBindViewHolder(PreviewViewHolder holder, int position) {
         ImageItem imageItem = imageItemList.get(position);
-        Log.e(TAG, "onBindViewHolder: position=" + position);
-        ImageUtil.load(context, imageItem.getImagePath(), holder.binding.imgPreview);
+        ImageUtil.loadLocalFile(context, holder.binding.imgPreview, imageItem.getImagePath());
         if (imageItem.isPreview()) {
             holder.binding.viewSquareLine.setVisibility(View.VISIBLE);
         } else {

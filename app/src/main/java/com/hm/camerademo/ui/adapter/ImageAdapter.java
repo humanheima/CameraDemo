@@ -34,7 +34,7 @@ public class ImageAdapter extends RecyclerView.Adapter<BindingViewHolder> {
     @Override
     public void onBindViewHolder(BindingViewHolder holder, int position) {
         ImageItem imageItem = data.get(position);
-        ImageUtil.load(context, imageItem.getImagePath(), ((ItemInDetailBinding) holder.getBinding()).itemImgBook);
+        ImageUtil.loadLocalFile(context, ((ItemInDetailBinding) holder.getBinding()).itemImgBook, imageItem.getImagePath());
     }
 
     @Override

@@ -66,7 +66,7 @@ public class PictureSelectAdapter extends RecyclerView.Adapter<PictureSelectAdap
             holder.getBinding().imgLocal.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    onPreviewListener.preview(holder.getAdapterPosition());
+                    onPreviewListener.onPreview(holder.getAdapterPosition());
                 }
             });
         }
@@ -87,7 +87,7 @@ public class PictureSelectAdapter extends RecyclerView.Adapter<PictureSelectAdap
 
     public interface OnPreviewListener {
 
-        void preview(int position);
+        void onPreview(int position);
     }
 
     public class PictureSelectHolder extends RecyclerView.ViewHolder {

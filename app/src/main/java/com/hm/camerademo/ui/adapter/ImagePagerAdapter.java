@@ -4,7 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.hm.camerademo.ui.fragment.ImagePreviewFragment;
+import com.hm.camerademo.ui.fragment.PreviewFragment;
 import com.hm.camerademo.util.localImages.ImageItem;
 
 import java.util.List;
@@ -28,6 +28,6 @@ public class ImagePagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         String url = imageItemList.get(position).getImagePath();
-        return ImagePreviewFragment.newInstance(url, isLocalImage);
+        return PreviewFragment.newInstance(url, isLocalImage);
     }
 }

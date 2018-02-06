@@ -59,7 +59,7 @@ public class RxGalleryActivity extends BaseActivity<ActivityRxGalleryBinding> {
 
                 @Override
                 public void openShowImage(int position) {
-                    //PicturePreviewActivity.launch(RxGalleryActivity.this, imagesList, position);
+                    //PreviewActivity.launch(RxGalleryActivity.this, imagesList, position);
                 }
             });
             viewBind.gridView.setAdapter(adapter);

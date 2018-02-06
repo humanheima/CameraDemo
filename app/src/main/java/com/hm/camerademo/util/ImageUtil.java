@@ -17,6 +17,7 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.hm.camerademo.R;
 
 import java.io.ByteArrayInputStream;
@@ -47,25 +48,34 @@ public class ImageUtil {
     private static final String TAG = "ImageUtil";
     private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HH:mm:ss", Locale.CHINA);
 
-    public ImageUtil() {
+    private static RequestOptions options = new RequestOptions()
+            .placeholder(R.mipmap.ic_launcher)
+            .error(R.mipmap.ic_launcher)
+            .dontAnimate();
+
+    private ImageUtil() {
     }
 
     public static void load(Context context, String url, ImageView imageView) {
         Glide.with(context)
                 .load(url)
-                .dontAnimate()
+                .apply(options)
                 .into(imageView);
     }
 
     public static void loadLocalFile(Context context, ImageView imageView, String url) {
-        if (TextUtils.isEmpty(url)) {
-            imageView.setImageResource(R.mipmap.ic_launcher);
-            return;
+        if (url.endsWith(".gif")) {
+            Glide.with(context)
+                    .asGif()
+                    .load(new File(url))
+                    .into(imageView);
+        } else {
+            Glide.with(context)
+                    .load(new File(url))
+                    .apply(options)
+                    .into(imageView);
         }
-        Glide.with(context)
-                .load(new File(url))
-                .error(R.mipmap.ic_launcher)
-                .into(imageView);
+
     }
 
 
