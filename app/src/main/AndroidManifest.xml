@@ -34,7 +34,6 @@
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:exported="true"/>
-        <activity android:name=".ui.activity.RxGalleryActivity"/>
 
         <!-- FileProvider -->
         <provider

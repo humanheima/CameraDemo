@@ -93,7 +93,7 @@ public class PreviewActivity extends BaseActivity<ActivityPreviewBinding> {
     }
 
     private void initView(int initPosition, List<ImageItem> list) {
-        ImagePagerAdapter imagePagerAdapter = new ImagePagerAdapter(getSupportFragmentManager(), list, true);
+        ImagePagerAdapter imagePagerAdapter = new ImagePagerAdapter(getSupportFragmentManager(), list);
         viewBind.viewPagerFixed.setAdapter(imagePagerAdapter);
         viewBind.viewPagerFixed.setCurrentItem(initPosition);
 

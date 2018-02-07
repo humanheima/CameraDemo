@@ -77,7 +77,7 @@ public class PictureSelectAdapter extends RecyclerView.Adapter<PictureSelectAdap
             holder.getBinding().imgSelect.setImageResource(R.drawable.ic_picture_unselected);
             holder.getBinding().imgLocal.setColorFilter(null);
         }
-        ImageUtil.loadLocalFile(context, holder.getBinding().imgLocal, item.getImagePath());
+        ImageUtil.loadSmallFile(context, holder.getBinding().imgLocal, item.getImagePath());
     }
 
     @Override

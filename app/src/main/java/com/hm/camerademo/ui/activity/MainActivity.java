@@ -74,9 +74,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements E
             case R.id.btn_xiaanming:
                 XAActivity.launch(MainActivity.this);
                 break;
-            case R.id.btn_final:
-                RxGalleryActivity.launch(MainActivity.this);
-                break;
             case R.id.btn_compress:
                 CompressActivity.launch(MainActivity.this);
                 break;

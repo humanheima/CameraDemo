@@ -52,6 +52,11 @@ public class ImageUtil {
             .placeholder(R.mipmap.ic_launcher)
             .error(R.mipmap.ic_launcher)
             .dontAnimate();
+    private static RequestOptions smallOptions = new RequestOptions()
+            .placeholder(R.mipmap.ic_launcher)
+            .error(R.mipmap.ic_launcher)
+            .override(200, 200)
+            .dontAnimate();
 
     private ImageUtil() {
     }
@@ -73,6 +78,21 @@ public class ImageUtil {
             Glide.with(context)
                     .load(new File(url))
                     .apply(options)
+                    .into(imageView);
+        }
+
+    }
+
+    public static void loadSmallFile(Context context, ImageView imageView, String url) {
+        if (url.endsWith(".gif")) {
+            Glide.with(context)
+                    .asGif()
+                    .load(new File(url))
+                    .into(imageView);
+        } else {
+            Glide.with(context)
+                    .load(new File(url))
+                    .apply(smallOptions)
                     .into(imageView);
         }
 
