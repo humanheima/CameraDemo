@@ -20,6 +20,7 @@ import com.hm.camerademo.network.HttpResult;
 import com.hm.camerademo.network.NetWork;
 import com.hm.camerademo.ui.base.BaseActivity;
 import com.hm.camerademo.util.ImageUtil;
+import com.yongchun.library.view.ImageSelectorActivity;
 
 import java.io.File;
 import java.io.IOException;
@@ -78,7 +79,12 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements E
                 CompressActivity.launch(MainActivity.this);
                 break;
             case R.id.btn_texture:
-                TextureViewActivity.launch(MainActivity.this);
+                ImageSelectorActivity.start(MainActivity.this,
+                        9, ImageSelectorActivity.MODE_MULTIPLE, false, true, false);
+                break;
+            case R.id.btn_other:
+                ImageSelectorActivity.start(MainActivity.this,
+                        9, ImageSelectorActivity.MODE_MULTIPLE, false, true, false);
                 break;
             default:
                 break;

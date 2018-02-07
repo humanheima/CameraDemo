@@ -7,75 +7,85 @@
         android:fitsSystemWindows="true"
         android:orientation="vertical">
 
-        <RelativeLayout
-            android:id="@+id/rl_top"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="#373c3d">
-
-            <ImageView
-                android:id="@+id/img_back"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="8dp"
-                android:onClick="click"
-                android:src="@drawable/ic_back" />
-
-            <View
-                android:id="@+id/view_split_back"
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="12dp"
-                android:layout_marginLeft="4dp"
-                android:layout_marginTop="12dp"
-                android:layout_toRightOf="@+id/img_back"
-                android:background="@android:color/black" />
-
-            <TextView
-                android:id="@+id/tv_number"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="12dp"
-                android:layout_toRightOf="@+id/view_split_back"
-                android:text="@string/all_images"
-                android:textColor="@android:color/white"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/tv_confirm"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="12dp"
-                android:background="@drawable/bg_choose"
-                android:enabled="false"
-                android:onClick="click"
-                android:paddingBottom="6dp"
-                android:paddingLeft="12dp"
-                android:paddingRight="12dp"
-                android:paddingTop="6dp"
-                android:text="@string/send"
-                android:textColor="@android:color/white" />
-
-        </RelativeLayout>
-
         <com.hm.camerademo.ui.widget.zoom.ViewPagerFixed
             android:id="@+id/viewPagerFixed"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="48dp"
-            android:layout_marginTop="48dp"
-            android:background="#000000" />
+            android:background="@color/black" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/status_bar_height"
+                android:background="@color/black" />
+
+            <RelativeLayout
+                android:id="@+id/rl_top"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="#dd393a3e">
+
+                <ImageView
+                    android:id="@+id/img_back"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="8dp"
+                    android:onClick="click"
+                    android:src="@drawable/ic_back" />
+
+                <View
+                    android:id="@+id/view_split_back"
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="12dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_toRightOf="@+id/img_back"
+                    android:background="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/tv_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="12dp"
+                    android:layout_toRightOf="@+id/view_split_back"
+                    android:text="@string/all_images"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tv_confirm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="12dp"
+                    android:background="@drawable/bg_choose"
+                    android:enabled="false"
+                    android:onClick="click"
+                    android:paddingBottom="6dp"
+                    android:paddingLeft="12dp"
+                    android:paddingRight="12dp"
+                    android:paddingTop="6dp"
+                    android:text="@string/send"
+                    android:textColor="@android:color/white" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/ll_rv"
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:layout_above="@+id/rl_bottom"
-            android:background="#252525"
+            android:background="#dd393a3e"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -93,7 +103,7 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_alignParentBottom="true"
-            android:background="#373c3d">
+            android:background="#dd393a3e">
 
             <LinearLayout
                 android:id="@+id/ll_check"
@@ -106,15 +116,15 @@
 
                 <ImageView
                     android:id="@+id/img_check"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/ic_picture_unselected" />
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_unselect" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:enabled="false"
-                    android:onClick="click"
+                    android:layout_marginLeft="2dp"
+                    android:gravity="center"
                     android:text="@string/choose"
                     android:textColor="@android:color/white"
                     android:textSize="16sp" />

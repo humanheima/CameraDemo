@@ -2,9 +2,13 @@ package com.hm.camerademo.ui.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
+import android.os.PersistableBundle;
+import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.hm.camerademo.R;
@@ -61,6 +65,7 @@ public class PreviewActivity extends BaseActivity<ActivityPreviewBinding> {
 
     @Override
     protected void initData() {
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         int initPosition = getIntent().getIntExtra(KEY_POSITION, 0);
         if (getIntent().getSerializableExtra(SELECTED_LIST) != null) {
             selectedList = (List<ImageItem>) getIntent().getSerializableExtra(SELECTED_LIST);
@@ -210,9 +215,9 @@ public class PreviewActivity extends BaseActivity<ActivityPreviewBinding> {
             }
             selectedList.get(position).setPreview(true);
             if (selectedList.get(position).isSelected()) {
-                viewBind.imgCheck.setImageResource(R.drawable.ic_pictures_selected);
+                viewBind.imgCheck.setImageResource(R.drawable.ic_selected_green);
             } else {
-                viewBind.imgCheck.setImageResource(R.drawable.ic_picture_unselected);
+                viewBind.imgCheck.setImageResource(R.drawable.ic_unselect);
             }
             viewBind.rv.scrollToPosition(position);
             previewRvAdapter.notifyDataSetChanged();
@@ -230,10 +235,10 @@ public class PreviewActivity extends BaseActivity<ActivityPreviewBinding> {
                 }
             }
             if (scrollToPosition != -1) {
-                viewBind.imgCheck.setImageResource(R.drawable.ic_pictures_selected);
+                viewBind.imgCheck.setImageResource(R.drawable.ic_selected_green);
                 viewBind.rv.scrollToPosition(scrollToPosition);
             } else {
-                viewBind.imgCheck.setImageResource(R.drawable.ic_picture_unselected);
+                viewBind.imgCheck.setImageResource(R.drawable.ic_unselect);
             }
             previewRvAdapter.notifyDataSetChanged();
         }

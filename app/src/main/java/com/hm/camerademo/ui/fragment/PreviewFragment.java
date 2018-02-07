@@ -1,5 +1,6 @@
 package com.hm.camerademo.ui.fragment;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -7,10 +8,16 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
-import com.github.chrisbanes.photoview.PhotoView;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.hm.camerademo.R;
-import com.hm.camerademo.util.ImageUtil;
+
+import java.io.File;
+
+import uk.co.senab.photoview.PhotoViewAttacher;
 
 public class PreviewFragment extends Fragment {
 
@@ -18,7 +25,6 @@ public class PreviewFragment extends Fragment {
     private static final String KEY_URL = "key_url";
 
     private String strUrl;
-    private PhotoView imageView;
 
     public static PreviewFragment newInstance(String imageUrl) {
         PreviewFragment f = new PreviewFragment();
@@ -38,8 +44,19 @@ public class PreviewFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View v = inflater.inflate(R.layout.fragment_preview, container, false);
-        imageView = v.findViewById(R.id.image);
-        ImageUtil.loadLocalFile(getContext(), imageView, strUrl);
+        final ImageView imageView = v.findViewById(R.id.image);
+        final PhotoViewAttacher mAttacher = new PhotoViewAttacher(imageView);
+        Glide.with(this)
+                .asBitmap()
+                .load(new File(strUrl))
+                .into(new SimpleTarget<Bitmap>(480, 800) {
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        imageView.setImageBitmap(resource);
+                        mAttacher.update();
+                    }
+                });
+        //ImageUtil.loadLocalFile(getContext(), imageView, strUrl);
         return v;
     }
 }

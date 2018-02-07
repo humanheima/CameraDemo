@@ -71,10 +71,10 @@ public class PictureSelectAdapter extends RecyclerView.Adapter<PictureSelectAdap
             });
         }
         if (item.isSelected()) {
-            holder.getBinding().imgSelect.setImageResource(R.drawable.ic_pictures_selected);
+            holder.getBinding().imgSelect.setImageResource(R.drawable.ic_selected_green);
             holder.getBinding().imgLocal.setColorFilter(SELECTED_COLOR_FILTER);
         } else {
-            holder.getBinding().imgSelect.setImageResource(R.drawable.ic_picture_unselected);
+            holder.getBinding().imgSelect.setImageResource(R.drawable.ic_unselect);
             holder.getBinding().imgLocal.setColorFilter(null);
         }
         ImageUtil.loadSmallFile(context, holder.getBinding().imgLocal, item.getImagePath());

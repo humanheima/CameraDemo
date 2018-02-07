@@ -49,13 +49,13 @@ public class ImageUtil {
     private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HH:mm:ss", Locale.CHINA);
 
     private static RequestOptions options = new RequestOptions()
-            .placeholder(R.mipmap.ic_launcher)
-            .error(R.mipmap.ic_launcher)
+            .placeholder(R.drawable.ic_placeholder)
+            .error(R.drawable.ic_placeholder)
             .dontAnimate();
     private static RequestOptions smallOptions = new RequestOptions()
-            .placeholder(R.mipmap.ic_launcher)
-            .error(R.mipmap.ic_launcher)
-            .override(200, 200)
+            .centerCrop()
+            .placeholder(R.drawable.ic_placeholder)
+            .error(R.drawable.ic_placeholder)
             .dontAnimate();
 
     private ImageUtil() {
