@@ -49,8 +49,13 @@ public class ImageUtil {
     private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HH:mm:ss", Locale.CHINA);
 
     private static RequestOptions options = new RequestOptions()
-            .placeholder(R.mipmap.ic_launcher)
-            .error(R.mipmap.ic_launcher)
+            .placeholder(R.drawable.ic_placeholder)
+            .error(R.drawable.ic_placeholder)
+            .dontAnimate();
+    private static RequestOptions smallOptions = new RequestOptions()
+            .centerCrop()
+            .placeholder(R.drawable.ic_placeholder)
+            .error(R.drawable.ic_placeholder)
             .dontAnimate();
 
     private ImageUtil() {
@@ -76,6 +81,13 @@ public class ImageUtil {
                     .into(imageView);
         }
 
+    }
+
+    public static void loadSmallFile(Context context, ImageView imageView, String url) {
+        Glide.with(context)
+                .load(new File(url))
+                .apply(smallOptions)
+                .into(imageView);
     }
 
 

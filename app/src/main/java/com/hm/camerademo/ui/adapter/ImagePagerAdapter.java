@@ -12,12 +12,10 @@ import java.util.List;
 public class ImagePagerAdapter extends FragmentStatePagerAdapter {
 
     private List<ImageItem> imageItemList;
-    private boolean isLocalImage;
 
-    public ImagePagerAdapter(FragmentManager fm, List<ImageItem> imageItemList, boolean isLocalImage) {
+    public ImagePagerAdapter(FragmentManager fm, List<ImageItem> imageItemList) {
         super(fm);
         this.imageItemList = imageItemList;
-        this.isLocalImage = isLocalImage;
     }
 
     @Override
@@ -28,6 +26,6 @@ public class ImagePagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         String url = imageItemList.get(position).getImagePath();
-        return PreviewFragment.newInstance(url, isLocalImage);
+        return PreviewFragment.newInstance(url);
     }
 }
