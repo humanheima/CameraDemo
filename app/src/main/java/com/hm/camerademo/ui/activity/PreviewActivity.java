@@ -2,9 +2,6 @@ package com.hm.camerademo.ui.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
@@ -98,6 +95,9 @@ public class PreviewActivity extends BaseActivity<ActivityPreviewBinding> {
     }
 
     private void initView(int initPosition, List<ImageItem> list) {
+        if (!onlyPreviewSelected && selectedList.isEmpty()) {
+            viewBind.llRv.setVisibility(View.GONE);
+        }
         ImagePagerAdapter imagePagerAdapter = new ImagePagerAdapter(getSupportFragmentManager(), list);
         viewBind.viewPagerFixed.setAdapter(imagePagerAdapter);
         viewBind.viewPagerFixed.setCurrentItem(initPosition);
@@ -112,7 +112,17 @@ public class PreviewActivity extends BaseActivity<ActivityPreviewBinding> {
         previewRvAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                viewBind.viewPagerFixed.setCurrentItem(position);
+                if (onlyPreviewSelected) {
+                    viewBind.viewPagerFixed.setCurrentItem(position);
+                } else {
+                    ImageItem item = selectedList.get(position);
+                    for (int i = 0; i < allList.size(); i++) {
+                        if (allList.get(i).getImagePath().equals(item.getImagePath())) {
+                            viewBind.viewPagerFixed.setCurrentItem(i);
+                            break;
+                        }
+                    }
+                }
             }
         });
     }
@@ -215,9 +225,9 @@ public class PreviewActivity extends BaseActivity<ActivityPreviewBinding> {
             }
             selectedList.get(position).setPreview(true);
             if (selectedList.get(position).isSelected()) {
-                viewBind.imgCheck.setImageResource(R.drawable.ic_selected_green);
+                viewBind.imgCheck.setImageDrawable(getResources().getDrawable(R.drawable.ic_selected_green));
             } else {
-                viewBind.imgCheck.setImageResource(R.drawable.ic_unselect);
+                viewBind.imgCheck.setImageDrawable(getResources().getDrawable(R.drawable.ic_unselect));
             }
             viewBind.rv.scrollToPosition(position);
             previewRvAdapter.notifyDataSetChanged();
@@ -235,10 +245,10 @@ public class PreviewActivity extends BaseActivity<ActivityPreviewBinding> {
                 }
             }
             if (scrollToPosition != -1) {
-                viewBind.imgCheck.setImageResource(R.drawable.ic_selected_green);
+                viewBind.imgCheck.setImageDrawable(getResources().getDrawable(R.drawable.ic_selected_green));
                 viewBind.rv.scrollToPosition(scrollToPosition);
             } else {
-                viewBind.imgCheck.setImageResource(R.drawable.ic_unselect);
+                viewBind.imgCheck.setImageDrawable(getResources().getDrawable(R.drawable.ic_unselect));
             }
             previewRvAdapter.notifyDataSetChanged();
         }
@@ -248,9 +258,11 @@ public class PreviewActivity extends BaseActivity<ActivityPreviewBinding> {
         if (count > 0) {
             viewBind.tvConfirm.setEnabled(true);
             viewBind.tvConfirm.setText(getString(R.string.send_count_format, count, MAX_COUNT));
+            viewBind.llRv.setVisibility(View.VISIBLE);
         } else {
             viewBind.tvConfirm.setEnabled(false);
             viewBind.tvConfirm.setText(getString(R.string.send));
+            viewBind.llRv.setVisibility(View.GONE);
         }
     }
 

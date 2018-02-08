@@ -84,18 +84,10 @@ public class ImageUtil {
     }
 
     public static void loadSmallFile(Context context, ImageView imageView, String url) {
-        if (url.endsWith(".gif")) {
-            Glide.with(context)
-                    .asGif()
-                    .load(new File(url))
-                    .into(imageView);
-        } else {
-            Glide.with(context)
-                    .load(new File(url))
-                    .apply(smallOptions)
-                    .into(imageView);
-        }
-
+        Glide.with(context)
+                .load(new File(url))
+                .apply(smallOptions)
+                .into(imageView);
     }
 
 

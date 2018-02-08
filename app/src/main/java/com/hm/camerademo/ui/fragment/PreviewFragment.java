@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.hm.camerademo.R;
@@ -46,6 +47,7 @@ public class PreviewFragment extends Fragment {
         final View v = inflater.inflate(R.layout.fragment_preview, container, false);
         final ImageView imageView = v.findViewById(R.id.image);
         final PhotoViewAttacher mAttacher = new PhotoViewAttacher(imageView);
+        // TODO: 2018/2/8 0008 不明白为什么要这样写
         Glide.with(this)
                 .asBitmap()
                 .load(new File(strUrl))
@@ -56,7 +58,6 @@ public class PreviewFragment extends Fragment {
                         mAttacher.update();
                     }
                 });
-        //ImageUtil.loadLocalFile(getContext(), imageView, strUrl);
         return v;
     }
 }

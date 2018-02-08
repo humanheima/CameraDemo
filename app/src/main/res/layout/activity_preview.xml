@@ -84,7 +84,7 @@
             android:id="@+id/ll_rv"
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            android:layout_above="@+id/rl_bottom"
+            android:layout_above="@+id/view_split_bottom"
             android:background="#dd393a3e"
             android:gravity="center_vertical"
             android:orientation="horizontal">
@@ -97,6 +97,13 @@
             </android.support.v7.widget.RecyclerView>
 
         </LinearLayout>
+
+        <View
+            android:id="@+id/view_split_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_above="@+id/rl_bottom"
+            android:background="#393a3e" />
 
         <RelativeLayout
             android:id="@+id/rl_bottom"

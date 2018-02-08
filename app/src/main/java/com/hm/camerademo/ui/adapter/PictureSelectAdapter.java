@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * Created by dumingwei on 2017/2/4.
  */
-public class PictureSelectAdapter extends RecyclerView.Adapter<PictureSelectAdapter.PictureSelectHolder> {
+public class PictureSelectAdapter extends RecyclerView.Adapter<BindingViewHolder<ItemPictureSelectBinding>> {
 
     private final int SELECTED_COLOR_FILTER = 0x77000000;
 
@@ -35,25 +35,27 @@ public class PictureSelectAdapter extends RecyclerView.Adapter<PictureSelectAdap
         this.onPreviewListener = onPreviewListener;
     }
 
-    public PictureSelectAdapter(List<ImageItem> imageLocal) {
+    public PictureSelectAdapter(Context context, List<ImageItem> imageLocal) {
+        this.context = context;
         this.imageLocal = imageLocal;
     }
 
     @Override
-    public PictureSelectHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (context == null) {
-            context = parent.getContext();
-        }
+    public BindingViewHolder<ItemPictureSelectBinding> onCreateViewHolder(ViewGroup parent, int viewType) {
         ItemPictureSelectBinding binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()),
                 R.layout.item_picture_select, parent, false);
-        PictureSelectHolder holder = new PictureSelectHolder(binding.getRoot());
-        holder.setBinding(binding);
+        BindingViewHolder<ItemPictureSelectBinding> holder = new BindingViewHolder<>(binding);
         return holder;
     }
 
     @Override
-    public void onBindViewHolder(final PictureSelectHolder holder, int position) {
+    public void onBindViewHolder(final BindingViewHolder<ItemPictureSelectBinding> holder, int position) {
         ImageItem item = imageLocal.get(position);
+        if (item.getImagePath().endsWith(".gif")) {
+            holder.getBinding().tvGif.setVisibility(View.VISIBLE);
+        } else {
+            holder.getBinding().tvGif.setVisibility(View.GONE);
+        }
         if (onItemClickListener != null) {
             holder.getBinding().imgSelect.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -71,10 +73,10 @@ public class PictureSelectAdapter extends RecyclerView.Adapter<PictureSelectAdap
             });
         }
         if (item.isSelected()) {
-            holder.getBinding().imgSelect.setImageResource(R.drawable.ic_selected_green);
+            holder.getBinding().imgSelect.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_selected_green));
             holder.getBinding().imgLocal.setColorFilter(SELECTED_COLOR_FILTER);
         } else {
-            holder.getBinding().imgSelect.setImageResource(R.drawable.ic_unselect);
+            holder.getBinding().imgSelect.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_unselect));
             holder.getBinding().imgLocal.setColorFilter(null);
         }
         ImageUtil.loadSmallFile(context, holder.getBinding().imgLocal, item.getImagePath());
@@ -90,21 +92,4 @@ public class PictureSelectAdapter extends RecyclerView.Adapter<PictureSelectAdap
         void onPreview(int position);
     }
 
-    public class PictureSelectHolder extends RecyclerView.ViewHolder {
-
-        private ItemPictureSelectBinding binding;
-
-        public PictureSelectHolder(View itemView) {
-            super(itemView);
-        }
-
-        public ItemPictureSelectBinding getBinding() {
-            return binding;
-        }
-
-        public void setBinding(ItemPictureSelectBinding binding) {
-            this.binding = binding;
-        }
-
-    }
 }
