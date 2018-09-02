@@ -15,5 +15,6 @@
     <string name="preview_count_format">预览(%1$d)</string>
     <string name="choose_images">选择图片</string>
     <string name="choose">选择</string>
+    <string name="gif">GIF</string>
 
 </resources>

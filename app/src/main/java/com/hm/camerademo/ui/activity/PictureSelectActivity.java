@@ -133,7 +133,7 @@ public class PictureSelectActivity extends BaseActivity<ActivityPictureSelectBin
 
     private void initRv() {
         viewBind.rvImages.setLayoutManager(new GridLayoutManager(PictureSelectActivity.this, 4));
-        adapter = new PictureSelectAdapter(imageList);
+        adapter = new PictureSelectAdapter(this,imageList);
         viewBind.rvImages.setAdapter(adapter);
         adapter.setOnPreviewListener(new PictureSelectAdapter.OnPreviewListener() {
             @Override
