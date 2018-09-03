@@ -118,6 +118,7 @@ public class LocalImagesUtil {
             allCount = allList.size();
             allBucket.setCount(allCount);
             Collections.sort(allList);
+            Collections.reverse(allList);
             allBucket.setImageList(allList);
             bucketList.add(0, allBucket);
             return bucketList;

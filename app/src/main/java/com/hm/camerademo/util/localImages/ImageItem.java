@@ -64,12 +64,14 @@ public class ImageItem implements Comparable<ImageItem>, Serializable {
         this.canceled = canceled;
     }
 
-    /**
-     * {@link java.util.Collections#sort(List)}这个方法排序是 ASC的
-     * 因为我们想倒序，所以 compareTo 方法，大的时候我们返回 -1 而小的时候我们返回1
-     */
     @Override
     public int compareTo(@NonNull ImageItem o) {
-        return this.time >= o.time ? -1 : 1;
+        if (this.time > o.time) {
+            return 1;
+        } else if (this.time == o.time) {
+            return 0;
+        } else {
+            return -1;
+        }
     }
 }
