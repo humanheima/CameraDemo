@@ -6,7 +6,7 @@ import android.content.Intent;
 import com.hm.camerademo.R;
 import com.hm.camerademo.databinding.ActivityFakeBinding;
 import com.hm.camerademo.ui.adapter.XAShowImageAdapter;
-import com.hm.camerademo.ui.base.BaseActivity;
+import com.hm.imageslector.base.BaseActivity;
 
 import java.io.Serializable;
 import java.util.ArrayList;

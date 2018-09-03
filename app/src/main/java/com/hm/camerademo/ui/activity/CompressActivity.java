@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 import com.hm.camerademo.R;
 import com.hm.camerademo.databinding.ActivityCompressBinding;
-import com.hm.camerademo.ui.base.BaseActivity;
+import com.hm.imageslector.base.BaseActivity;
 import com.hm.camerademo.util.ImageUtil;
 import com.hm.camerademo.util.ScreenUtil;
 

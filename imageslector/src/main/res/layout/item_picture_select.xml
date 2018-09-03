@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data class="MyItemPictureSelectBinding">
+
+    </data>
+
+    <com.hm.imageslector.widget.ScaleRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="1dp">
+
+        <ImageView
+            android:id="@+id/img_local"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <ImageView
+            android:id="@+id/img_select"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_alignParentRight="true"
+            android:layout_margin="4dp"
+            android:src="@drawable/ic_unselect" />
+
+        <TextView
+            android:id="@+id/tv_gif"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="8dp"
+            android:background="@drawable/bg_tv_gif"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:text="@string/gif"
+            android:textColor="#000000"
+            android:textSize="12sp" />
+
+    </com.hm.imageslector.widget.ScaleRelativeLayout>
+
+</layout>

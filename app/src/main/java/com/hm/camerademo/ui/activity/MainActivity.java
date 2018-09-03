@@ -18,7 +18,7 @@ import com.hm.camerademo.R;
 import com.hm.camerademo.databinding.ActivityMainBinding;
 import com.hm.camerademo.network.HttpResult;
 import com.hm.camerademo.network.NetWork;
-import com.hm.camerademo.ui.base.BaseActivity;
+import com.hm.imageslector.base.BaseActivity;
 import com.hm.camerademo.util.ImageUtil;
 import com.yongchun.library.view.ImageSelectorActivity;
 

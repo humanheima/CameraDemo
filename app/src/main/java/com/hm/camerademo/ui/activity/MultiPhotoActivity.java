@@ -5,22 +5,18 @@ import android.content.Intent;
 import android.support.v7.widget.GridLayoutManager;
 import android.view.View;
 
+import com.hm.imageslector.activity.PictureSelectActivity;
+import com.hm.imageslector.base.BaseActivity;
+import com.hm.imageslector.localImages.ImageItem;
 import com.hm.camerademo.R;
 import com.hm.camerademo.databinding.ActivityMultiPhotoBinding;
 import com.hm.camerademo.ui.adapter.ImageAdapter;
-import com.hm.camerademo.ui.base.BaseActivity;
-import com.hm.camerademo.util.localImages.ImageItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MultiPhotoActivity extends BaseActivity<ActivityMultiPhotoBinding> {
 
-    public static final int CHOOSE_MULTI_IMAGE = 1400;//选取多张图片
-    public static final int CHOOSE_MULTI_IMAGE_OK = 700;
-    public static final int IMAGE_PREVIEW = 9;//图片预览
-    public static final int IMAGE_PREVIEW_OK = 10;
-    public static final String MAX_COUNT = "MAX_COUNT";
 
     private ImageAdapter adapter;
     private List<ImageItem> imagesList;
@@ -28,7 +24,7 @@ public class MultiPhotoActivity extends BaseActivity<ActivityMultiPhotoBinding> 
 
     public static void launch(Context context, int maxCount) {
         Intent intent = new Intent(context, MultiPhotoActivity.class);
-        intent.putExtra(MAX_COUNT, maxCount);
+        intent.putExtra(PictureSelectActivity.IMAGE_MAX_COUNT, maxCount);
         context.startActivity(intent);
     }
 
@@ -39,7 +35,7 @@ public class MultiPhotoActivity extends BaseActivity<ActivityMultiPhotoBinding> 
 
     @Override
     protected void initData() {
-        maxCount = getIntent().getIntExtra(MAX_COUNT, 9);
+        maxCount = getIntent().getIntExtra(PictureSelectActivity.IMAGE_MAX_COUNT, 9);
         if (maxCount > 9) {
             maxCount = 9;
         }
@@ -57,8 +53,8 @@ public class MultiPhotoActivity extends BaseActivity<ActivityMultiPhotoBinding> 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case CHOOSE_MULTI_IMAGE:
-                if (resultCode == CHOOSE_MULTI_IMAGE_OK) {
+            case PictureSelectActivity.CHOOSE_MULTI_IMAGE:
+                if (resultCode == PictureSelectActivity.CHOOSE_MULTI_IMAGE_OK) {
                     List<ImageItem> images = (List<ImageItem>) data.getSerializableExtra(PictureSelectActivity.IMAGE_LIST);
                     imagesList.clear();
                     imagesList.addAll(images);

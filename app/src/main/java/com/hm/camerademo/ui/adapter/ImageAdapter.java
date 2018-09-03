@@ -6,10 +6,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import com.hm.imageslector.adapter.BindingViewHolder;
+import com.hm.imageslector.localImages.ImageItem;
 import com.hm.camerademo.R;
 import com.hm.camerademo.databinding.ItemInDetailBinding;
 import com.hm.camerademo.util.ImageUtil;
-import com.hm.camerademo.util.localImages.ImageItem;
 
 import java.util.List;
 

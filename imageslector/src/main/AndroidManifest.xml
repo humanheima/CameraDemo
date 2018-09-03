@@ -1,0 +1,10 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.imageslector">
+
+    <application>
+
+        <activity android:name="com.hm.imageslector.activity.PictureSelectActivity" />
+        <activity android:name="com.hm.imageslector.activity.PreviewActivity" />
+    </application>
+
+</manifest>

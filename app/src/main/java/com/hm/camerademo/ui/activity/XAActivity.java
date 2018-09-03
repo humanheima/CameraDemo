@@ -12,7 +12,7 @@ import android.widget.AdapterView;
 import com.hm.camerademo.R;
 import com.hm.camerademo.databinding.ActivityXaBinding;
 import com.hm.camerademo.ui.adapter.XAGroupAdapter;
-import com.hm.camerademo.ui.base.BaseActivity;
+import com.hm.imageslector.base.BaseActivity;
 import com.hm.camerademo.util.xiananmingdemo.ImageBean;
 
 import java.io.File;
