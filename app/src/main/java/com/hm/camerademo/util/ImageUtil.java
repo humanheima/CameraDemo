@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.databinding.BindingAdapter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -12,7 +11,6 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -64,6 +62,13 @@ public class ImageUtil {
     public static void load(Context context, String url, ImageView imageView) {
         Glide.with(context)
                 .load(url)
+                .apply(options)
+                .into(imageView);
+    }
+
+    public static void load(Context context, int resId, ImageView imageView) {
+        Glide.with(context)
+                .load(resId)
                 .apply(options)
                 .into(imageView);
     }
@@ -307,7 +312,7 @@ public class ImageUtil {
      * @param path 图片绝对路径
      * @return 图片的旋转角度
      */
-    public static int getBitmapDegree(String path) {
+    private static int getBitmapDegree(String path) {
         int degree = 0;
         try {
             // 从指定路径下读取图片，并获取其EXIF信息

@@ -9,7 +9,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -18,8 +17,8 @@ import com.hm.camerademo.R;
 import com.hm.camerademo.databinding.ActivityMainBinding;
 import com.hm.camerademo.network.HttpResult;
 import com.hm.camerademo.network.NetWork;
-import com.hm.imageslector.base.BaseActivity;
 import com.hm.camerademo.util.ImageUtil;
+import com.hm.imageslector.base.BaseActivity;
 import com.yongchun.library.view.ImageSelectorActivity;
 
 import java.io.File;
@@ -39,12 +38,12 @@ import rx.schedulers.Schedulers;
 
 public class MainActivity extends BaseActivity<ActivityMainBinding> implements EasyPermissions.PermissionCallbacks {
 
-    private final String TAG = getClass().getSimpleName();
-    private static final int TAKE_PHOTO = 1000;
     public static final int REQUEST_TAKE_PHOTO_PERMISSION = 1001;
     public static final int CHOOSE_FROM_ALBUM = 1002;
     //系统剪裁
     public static final int SYSTEM_CROP = 1003;
+    private static final int TAKE_PHOTO = 1000;
+    private final String TAG = getClass().getSimpleName();
     private Uri photoURI;
     private File cropFile;
 
@@ -66,9 +65,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements E
             case R.id.btn_choose_photo:
                 chooseFromAlbum();
                 break;
-            case R.id.btn_save_bitmap:
-                saveBitmap();
-                break;
             case R.id.btn_choose_multi_photo:
                 MultiPhotoActivity.launch(MainActivity.this, 3);
                 break;
@@ -77,10 +73,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements E
                 break;
             case R.id.btn_compress:
                 CompressActivity.launch(MainActivity.this);
-                break;
-            case R.id.btn_texture:
-                ImageSelectorActivity.start(MainActivity.this,
-                        9, ImageSelectorActivity.MODE_MULTIPLE, false, true, false);
                 break;
             case R.id.btn_other:
                 ImageSelectorActivity.start(MainActivity.this,
@@ -117,28 +109,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements E
         Intent intent = new Intent(Intent.ACTION_PICK, null);
         intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
         startActivityForResult(intent, CHOOSE_FROM_ALBUM);
-    }
-
-    /**
-     * 把imageView上的bitmap保存到本地
-     */
-    private void saveBitmap() {
-        String destination = null;
-        viewBind.imgPreview.setDrawingCacheEnabled(true);
-        Bitmap bitmap = viewBind.imgPreview.getDrawingCache();
-        if (bitmap != null) {
-            try {
-                destination = ImageUtil.compressImage(MainActivity.this, bitmap, 70);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            if (TextUtils.isEmpty(destination)) {
-                Toast.makeText(MainActivity.this, "保存失败", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(MainActivity.this, "压缩成功", Toast.LENGTH_SHORT).show();
-            }
-        }
-        viewBind.imgPreview.setDrawingCacheEnabled(false);
     }
 
     @Override

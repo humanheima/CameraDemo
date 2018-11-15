@@ -10,12 +10,15 @@ import android.widget.Toast;
 
 import com.hm.camerademo.R;
 import com.hm.camerademo.databinding.ActivityCompressBinding;
-import com.hm.imageslector.base.BaseActivity;
 import com.hm.camerademo.util.ImageUtil;
 import com.hm.camerademo.util.ScreenUtil;
+import com.hm.imageslector.base.BaseActivity;
 
 import java.io.IOException;
 
+/**
+ * 压缩图片质量
+ */
 public class CompressActivity extends BaseActivity<ActivityCompressBinding> {
 
     private static final String TAG = "CompressActivity";
@@ -54,7 +57,7 @@ public class CompressActivity extends BaseActivity<ActivityCompressBinding> {
             if (TextUtils.isEmpty(destination)) {
                 Toast.makeText(CompressActivity.this, "保存失败", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(CompressActivity.this, "保存成功", Toast.LENGTH_SHORT).show();
+                Toast.makeText(CompressActivity.this, "保存成功，图片位于：" + destination, Toast.LENGTH_SHORT).show();
             }
         }
         viewBind.imgLarge.setDrawingCacheEnabled(false);
