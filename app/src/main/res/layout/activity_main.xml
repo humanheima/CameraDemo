@@ -28,43 +28,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:onClick="onClick"
-                android:text="@string/take_photo" />
-
-            <Button
-                android:id="@+id/btn_choose_photo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="onClick"
-                android:text="@string/choose_from_album" />
-
-            <Button
-                android:id="@+id/btn_choose_multi_photo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="onClick"
-                android:text="@string/customize_picture_picker" />
-
-            <Button
-                android:id="@+id/btn_xiaanming"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="onClick"
-                android:text="启动xiaanmingActivity"
+                android:text="使用FileProvider创建文件来拍照"
                 android:textAllCaps="false" />
 
             <Button
-                android:id="@+id/btn_compress"
+                android:id="@+id/btn_test_path"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:onClick="onClick"
-                android:text="图片压缩质量" />
-
-            <Button
-                android:id="@+id/btn_other"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="onClick"
-                android:text="参考"
+                android:text="在Logcat中打印输出路径"
                 android:textAllCaps="false" />
 
         </LinearLayout>

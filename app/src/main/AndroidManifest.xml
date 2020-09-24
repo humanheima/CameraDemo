@@ -39,16 +39,18 @@
             android:authorities="com.hm.camerademo.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
+
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/filepaths" />
+
         </provider>
 
         <activity
             android:name=".ui.activity.CompressActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
         <!-- 自定义剪裁界面 -->
-        <activity android:name=".ui.activity.CropActivity"></activity>
+        <activity android:name=".ui.activity.CropActivity"/>
     </application>
 
 </manifest>

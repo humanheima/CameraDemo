@@ -16,6 +16,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.hm.camerademo.App;
 import com.hm.camerademo.R;
 
 import java.io.ByteArrayInputStream;
@@ -107,9 +108,9 @@ public class ImageUtil {
         File storageDir;
         String timeStamp = dateFormat.format(new Date());
         try {
-            storagePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath() + File.separator + "camerademo";
+            //storagePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath() + File.separator + "camerademo";
             //storagePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath() + File.separator + "camerademo";
-            //storagePath = App.getInstance().getExternalFilesDir(Environment.DIRECTORY_PICTURES).getAbsolutePath();
+            storagePath = App.getInstance().getExternalFilesDir(Environment.DIRECTORY_PICTURES).getAbsolutePath();
             //storagePath = App.getInstance().getExternalCacheDir().getAbsolutePath() + File.separator + "camerademo";
             //storagePath = App.getInstance().getFilesDir().getAbsolutePath() + File.separator + "images";
             storageDir = new File(storagePath);

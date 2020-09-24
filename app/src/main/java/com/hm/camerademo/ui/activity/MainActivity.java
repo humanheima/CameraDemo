@@ -7,6 +7,7 @@ import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
@@ -15,19 +16,12 @@ import android.widget.Toast;
 
 import com.hm.camerademo.R;
 import com.hm.camerademo.databinding.ActivityMainBinding;
-import com.hm.camerademo.network.HttpResult;
-import com.hm.camerademo.network.NetWork;
 import com.hm.camerademo.util.ImageUtil;
 import com.hm.imageslector.base.BaseActivity;
-import com.yongchun.library.view.ImageSelectorActivity;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 import rx.Observable;
@@ -36,6 +30,11 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
+/**
+ * Created by dumingwei on 2020/9/24
+ * <p>
+ * Desc:
+ */
 public class MainActivity extends BaseActivity<ActivityMainBinding> implements EasyPermissions.PermissionCallbacks {
 
     public static final int REQUEST_TAKE_PHOTO_PERMISSION = 1001;
@@ -62,25 +61,49 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements E
             case R.id.btn_take_photo:
                 takePhoto();
                 break;
-            case R.id.btn_choose_photo:
-                chooseFromAlbum();
-                break;
-            case R.id.btn_choose_multi_photo:
-                MultiPhotoActivity.launch(MainActivity.this, 3);
-                break;
-            case R.id.btn_xiaanming:
-                XAActivity.launch(MainActivity.this);
-                break;
-            case R.id.btn_compress:
-                CompressActivity.launch(MainActivity.this);
-                break;
-            case R.id.btn_other:
-                ImageSelectorActivity.start(MainActivity.this,
-                        9, ImageSelectorActivity.MODE_MULTIPLE, false, true, false);
+            case R.id.btn_test_path:
+                logcatPath();
+
                 break;
             default:
                 break;
         }
+    }
+
+    /**
+     * Environment.getExternalStorageDirectory().getAbsolutePath() =/storage/emulated/0
+     * Context.getFilesDir() =/data/user/0/com.hm.camerademo/files
+     * Context.getCacheDir() =/data/user/0/com.hm.camerademo/cache
+     * Context.getExternalFilesDir() =/storage/emulated/0/Android/data/com.hm.camerademo/files
+     * Context.externalCacheDir() =/storage/emulated/0/Android/data/com.hm.camerademo/cache
+     */
+    private void logcatPath() {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        String externalStorageDirectory = Environment.getExternalStorageDirectory().getAbsolutePath();
+
+        stringBuilder.append("Environment.getExternalStorageDirectory().getAbsolutePath() =")
+                .append(externalStorageDirectory)
+                .append("\n");
+
+
+        String filesDir = getFilesDir().getAbsolutePath();
+
+        stringBuilder.append("Context.getFilesDir() =").append(filesDir).append("\n");
+
+        String cacheDir = getCacheDir().getAbsolutePath();
+
+        stringBuilder.append("Context.getCacheDir() =").append(cacheDir).append("\n");
+
+        String externalFilesDir = getExternalFilesDir(null).getAbsolutePath();
+
+        stringBuilder.append("Context.getExternalFilesDir() =").append(externalFilesDir).append("\n");
+
+        String externalCacheDir = getExternalCacheDir().getAbsolutePath();
+
+        stringBuilder.append("Context.externalCacheDir() =").append(externalCacheDir).append("\n");
+
+        Log.i(TAG, "\n" + stringBuilder.toString());
     }
 
     private void requestPermission() {
@@ -103,12 +126,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements E
                 startActivityForResult(takePictureIntent, TAKE_PHOTO);
             }
         }
-    }
-
-    private void chooseFromAlbum() {
-        Intent intent = new Intent(Intent.ACTION_PICK, null);
-        intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
-        startActivityForResult(intent, CHOOSE_FROM_ALBUM);
     }
 
     @Override
@@ -172,43 +189,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements E
     }
 
     /**
-     * 处理拍照后的图片
-     */
-    private void processTakePhoto(final String imgPath) {
-        //图片被旋转,则旋转为正常角度并保存
-        Observable.just(imgPath)
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .observeOn(Schedulers.io())
-                .map(new Func1<String, String>() {
-                    @Override
-                    public String call(String s) {
-                        try {
-                            //返回压缩的图片的路径，要记得上传完成后，把这个压缩的图片给删除了。
-                            return ImageUtil.compressImage(MainActivity.this, imgPath, 70);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        return null;
-                    }
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<String>() {
-                    @Override
-                    public void call(String imgPath) {
-                        ImageUtil.load(MainActivity.this, imgPath, viewBind.imgPreview);
-                        Toast.makeText(MainActivity.this, "压缩成功", Toast.LENGTH_SHORT).show();
-                        // TODO: 2017/2/10 在这里上传图片
-                        //uploadAvatar(imgPath);
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        Toast.makeText(MainActivity.this, "压缩失败" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
-    /**
      * 从相册选取后展示，压缩上传
      *
      * @param picturePath
@@ -257,40 +237,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements E
                 });
     }
 
-    /**
-     * 上传头像,删除压缩后的图片
-     *
-     * @param imgPath
-     */
-    private void uploadAvatar(final String imgPath) {
-        File file = new File(imgPath);
-        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-        final MultipartBody.Part part = MultipartBody.Part.createFormData("file[]", file.getName(), requestBody);
-        NetWork.getApi().uploadAvatar(part)
-                .subscribeOn(Schedulers.io())
-                .flatMap(new Func1<HttpResult<String>, Observable<String>>() {
-                    @Override
-                    public Observable<String> call(HttpResult<String> result) {
-                        return NetWork.flatResponse(result);
-                    }
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<String>() {
-                    @Override
-                    public void call(String s) {
-                        //上传成功，删除压缩图片
-                        File deleteFile = new File(imgPath);
-                        if (deleteFile.exists()) {
-                            deleteFile.delete();
-                        }
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-
-                    }
-                });
-    }
 
     @Override
     public void onPermissionsGranted(int requestCode, List<String> perms) {
