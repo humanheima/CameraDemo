@@ -5,7 +5,7 @@
     android:background="@color/black"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         style="@style/MyToolbar"
         android:layout_width="match_parent"
@@ -23,9 +23,9 @@
             android:background="@drawable/btn_round_green_selector"
             android:textSize="@dimen/small_text_size"
             android:textColor="@color/white_text_selector"/>
-    </android.support.v7.widget.Toolbar>
+    </androidx.appcompat.widget.Toolbar>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/folder_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -23,13 +23,31 @@ android {
     packagingOptions {
         exclude 'META-INF/rxjava.properties'
     }
+
+    signingConfigs {
+        release {
+            //读取gradle.properties的属性
+            storeFile file(KEY_STORE_FILE)
+            storePassword KEY_STORE_PASSWORD
+            keyAlias KEY_ALIAS
+            keyPassword KEY_PASSWORD
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+        debug {
+            storeFile file(KEY_STORE_FILE)
+            storePassword KEY_STORE_PASSWORD
+            keyAlias KEY_ALIAS
+            keyPassword KEY_PASSWORD
+        }
+    }
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:appcompat-v7:' + rootProject.ext.supportVersion
-    implementation 'com.android.support:recyclerview-v7:' + rootProject.ext.supportVersion
-    implementation 'com.android.support:support-v4:' + rootProject.ext.supportVersion
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'io.reactivex:rxandroid:1.2.1'
     implementation 'io.reactivex:rxjava:1.1.9'
     implementation 'com.github.bumptech.glide:glide:4.7.1'
@@ -38,7 +56,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
     implementation 'pub.devrel:easypermissions:1.1.3'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'com.isseiaoki:simplecropview:1.1.7'
     implementation 'com.github.chrisbanes:PhotoView:2.1.3'
     implementation 'com.commit451:PhotoView:1.2.4'

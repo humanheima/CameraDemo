@@ -2,21 +2,19 @@ package com.hm.imageslector.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
-
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.viewpager.widget.ViewPager;
 import com.example.imageslector.R;
+import com.example.imageslector.databinding.ActivityPreviewBinding;
 import com.hm.imageslector.adapter.ImagePagerAdapter;
 import com.hm.imageslector.adapter.PreviewRvAdapter;
 import com.hm.imageslector.base.BaseActivity;
-import com.example.imageslector.databinding.ActivityPreviewBinding;
 import com.hm.imageslector.listener.OnItemClickListener;
 import com.hm.imageslector.localImages.ImageItem;
 import com.hm.imageslector.util.ListUtil;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

@@ -5,14 +5,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.yongchun.library.R;
 import com.yongchun.library.adapter.ImageFolderAdapter;
 import com.yongchun.library.adapter.ImageListAdapter;
@@ -22,7 +21,6 @@ import com.yongchun.library.utils.FileUtils;
 import com.yongchun.library.utils.GridSpacingItemDecoration;
 import com.yongchun.library.utils.LocalMediaLoader;
 import com.yongchun.library.utils.ScreenUtils;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +29,7 @@ import java.util.List;
  * Created by dee on 15/11/19.
  */
 public class ImageSelectorActivity extends AppCompatActivity {
+
     public final static int REQUEST_IMAGE = 66;
     public final static int REQUEST_CAMERA = 67;
 
@@ -69,7 +68,8 @@ public class ImageSelectorActivity extends AppCompatActivity {
 
     private String cameraPath;
 
-    public static void start(Activity activity, int maxSelectNum, int mode, boolean isShow, boolean enablePreview, boolean enableCrop) {
+    public static void start(Activity activity, int maxSelectNum, int mode, boolean isShow, boolean enablePreview,
+            boolean enableCrop) {
         Intent intent = new Intent(activity, ImageSelectorActivity.class);
         intent.putExtra(EXTRA_MAX_SELECT_NUM, maxSelectNum);
         intent.putExtra(EXTRA_SELECT_MODE, mode);
@@ -100,14 +100,15 @@ public class ImageSelectorActivity extends AppCompatActivity {
         }
         initView();
         registerListener();
-        new LocalMediaLoader(this, LocalMediaLoader.TYPE_IMAGE).loadAllImage(new LocalMediaLoader.LocalMediaLoadListener() {
+        new LocalMediaLoader(this, LocalMediaLoader.TYPE_IMAGE).loadAllImage(
+                new LocalMediaLoader.LocalMediaLoadListener() {
 
-            @Override
-            public void loadComplete(List<LocalMediaFolder> folders) {
-                folderWindow.bindFolder(folders);
-                imageAdapter.bindImages(folders.get(0).getImages());
-            }
-        });
+                    @Override
+                    public void loadComplete(List<LocalMediaFolder> folders) {
+                        folderWindow.bindFolder(folders);
+                        imageAdapter.bindImages(folders.get(0).getImages());
+                    }
+                });
     }
 
     public void initView() {
@@ -132,7 +133,7 @@ public class ImageSelectorActivity extends AppCompatActivity {
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(spanCount, ScreenUtils.dip2px(this, 20), false));
         recyclerView.setLayoutManager(new GridLayoutManager(this, spanCount));
 
-        imageAdapter = new ImageListAdapter(this, maxSelectNum, selectMode, showCamera,enablePreview);
+        imageAdapter = new ImageListAdapter(this, maxSelectNum, selectMode, showCamera, enablePreview);
         recyclerView.setAdapter(imageAdapter);
 
     }
@@ -223,10 +224,11 @@ public class ImageSelectorActivity extends AppCompatActivity {
             //on preview select change
             else if (requestCode == ImagePreviewActivity.REQUEST_PREVIEW) {
                 boolean isDone = data.getBooleanExtra(ImagePreviewActivity.OUTPUT_ISDONE, false);
-                List<LocalMedia> images = (List<LocalMedia>) data.getSerializableExtra(ImagePreviewActivity.OUTPUT_LIST);
+                List<LocalMedia> images = (List<LocalMedia>) data.getSerializableExtra(
+                        ImagePreviewActivity.OUTPUT_LIST);
                 if (isDone) {
                     onSelectDone(images);
-                }else{
+                } else {
                     imageAdapter.bindSelectImages(images);
                 }
             }
@@ -257,7 +259,8 @@ public class ImageSelectorActivity extends AppCompatActivity {
     }
 
     public void startPreview(List<LocalMedia> previewImages, int position) {
-        ImagePreviewActivity.startPreview(this, previewImages, imageAdapter.getSelectedImages(), maxSelectNum, position);
+        ImagePreviewActivity.startPreview(this, previewImages, imageAdapter.getSelectedImages(), maxSelectNum,
+                position);
     }
 
     public void startCrop(String path) {

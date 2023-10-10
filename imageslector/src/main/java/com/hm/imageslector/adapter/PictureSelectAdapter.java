@@ -1,18 +1,16 @@
 package com.hm.imageslector.adapter;
 
 import android.content.Context;
-import android.databinding.DataBindingUtil;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import androidx.databinding.DataBindingUtil;
+import androidx.recyclerview.widget.RecyclerView;
 import com.example.imageslector.R;
 import com.example.imageslector.databinding.MyItemPictureSelectBinding;
 import com.hm.imageslector.listener.OnItemClickListener;
 import com.hm.imageslector.localImages.ImageItem;
 import com.hm.imageslector.util.ImageUtil;
-
 import java.util.List;
 
 /**
@@ -73,7 +71,8 @@ public class PictureSelectAdapter extends RecyclerView.Adapter<BindingViewHolder
             });
         }
         if (item.isSelected()) {
-            holder.getBinding().imgSelect.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_selected_green));
+            holder.getBinding().imgSelect.setImageDrawable(
+                    context.getResources().getDrawable(R.drawable.ic_selected_green));
             holder.getBinding().imgLocal.setColorFilter(SELECTED_COLOR_FILTER);
         } else {
             holder.getBinding().imgSelect.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_unselect));

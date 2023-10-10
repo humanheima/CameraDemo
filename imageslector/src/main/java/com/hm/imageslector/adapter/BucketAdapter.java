@@ -1,13 +1,13 @@
 package com.hm.imageslector.adapter;
 
 import android.content.Context;
-import android.databinding.DataBindingUtil;
-import android.support.v7.widget.RecyclerView;
+import androidx.databinding.DataBindingUtil;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.recyclerview.widget.RecyclerView;
 import com.example.imageslector.R;
 import com.example.imageslector.databinding.MyItemBucketBinding;
 import com.hm.imageslector.listener.OnItemClickListener;

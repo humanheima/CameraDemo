@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         style="@style/MyToolbar"
         android:layout_width="match_parent"
@@ -24,7 +24,7 @@
             android:text="@string/use"
             android:textColor="@color/white_text_selector"
             android:textSize="@dimen/small_text_size" />
-    </android.support.v7.widget.Toolbar>
+    </androidx.appcompat.widget.Toolbar>
 
     <com.isseiaoki.simplecropview.CropImageView
         android:id="@+id/cropImageView"

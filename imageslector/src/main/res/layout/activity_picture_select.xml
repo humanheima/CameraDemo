@@ -1,127 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools">
+<layout>
 
     <data></data>
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true">
 
         <RelativeLayout
-            android:id="@+id/rl_top"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="#373c3d">
+                android:id="@+id/rl_top"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="#373c3d">
 
             <ImageView
-                android:id="@+id/img_back"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="8dp"
-                android:onClick="click"
-                android:src="@drawable/ic_back" />
+                    android:id="@+id/img_back"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="8dp"
+                    android:onClick="click"
+                    android:src="@drawable/ic_back" />
 
             <View
-                android:id="@+id/view_split_back"
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="12dp"
-                android:layout_marginLeft="4dp"
-                android:layout_marginTop="12dp"
-                android:layout_toRightOf="@+id/img_back"
-                android:background="@android:color/black" />
+                    android:id="@+id/view_split_back"
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="12dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_toRightOf="@+id/img_back"
+                    android:background="@android:color/black" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="12dp"
-                android:layout_toRightOf="@+id/view_split_back"
-                android:text="@string/all_images"
-                android:textColor="@android:color/white"
-                android:textSize="14sp" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="12dp"
+                    android:layout_toRightOf="@+id/view_split_back"
+                    android:text="@string/all_images"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp" />
 
             <TextView
-                android:id="@+id/tv_confirm"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="12dp"
-                android:background="@drawable/bg_choose"
-                android:enabled="false"
-                android:onClick="click"
-                android:paddingBottom="6dp"
-                android:paddingLeft="12dp"
-                android:paddingRight="12dp"
-                android:paddingTop="6dp"
-                android:text="@string/send"
-                android:textColor="@android:color/white" />
+                    android:id="@+id/tv_confirm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="12dp"
+                    android:background="@drawable/bg_choose"
+                    android:enabled="false"
+                    android:onClick="click"
+                    android:paddingBottom="6dp"
+                    android:paddingLeft="12dp"
+                    android:paddingRight="12dp"
+                    android:paddingTop="6dp"
+                    android:text="@string/send"
+                    android:textColor="@android:color/white" />
 
         </RelativeLayout>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_images"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/rl_bottom"
-            android:layout_below="@+id/rl_top"
-            android:background="#000000" />
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_images"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/rl_bottom"
+                android:layout_below="@+id/rl_top"
+                android:background="#000000" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_bucket"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignBottom="@+id/rv_images"
-            android:layout_alignTop="@+id/rv_images"
-            android:layout_marginTop="80dp"
-            android:background="@android:color/white" />
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_bucket"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignBottom="@+id/rv_images"
+                android:layout_alignTop="@+id/rv_images"
+                android:layout_marginTop="80dp"
+                android:background="@android:color/white" />
 
         <RelativeLayout
-            android:id="@+id/rl_bottom"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_alignParentBottom="true"
-            android:background="#373c3d">
+                android:id="@+id/rl_bottom"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_alignParentBottom="true"
+                android:background="#373c3d">
 
             <LinearLayout
-                android:id="@+id/ll_bucket"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:onClick="click">
+                    android:id="@+id/ll_bucket"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:onClick="click">
 
                 <TextView
-                    android:id="@+id/tv_bucket"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:text="@string/all_images"
-                    android:textColor="@android:color/white"
-                    android:textSize="16sp" />
+                        android:id="@+id/tv_bucket"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:text="@string/all_images"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp" />
 
                 <ImageView
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
-                    android:layout_marginLeft="2dp"
-                    android:src="@drawable/ic_bucket_indicator" />
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:layout_marginLeft="2dp"
+                        android:src="@drawable/ic_bucket_indicator" />
 
             </LinearLayout>
 
             <TextView
-                android:id="@+id/tv_preview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="16dp"
-                android:enabled="false"
-                android:onClick="click"
-                android:text="@string/preview"
-                android:textColor="@android:color/white"
-                android:textSize="16sp" />
+                    android:id="@+id/tv_preview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="16dp"
+                    android:enabled="false"
+                    android:onClick="click"
+                    android:text="@string/preview"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp" />
 
         </RelativeLayout>
 

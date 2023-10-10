@@ -2,19 +2,17 @@ package com.yongchun.library.adapter;
 
 import android.content.Context;
 import android.graphics.PorterDuff;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
-
+import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.yongchun.library.R;
 import com.yongchun.library.model.LocalMedia;
 import com.yongchun.library.view.ImageSelectorActivity;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -131,7 +129,8 @@ public class ImageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             contentHolder.contentView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if ((selectMode == ImageSelectorActivity.MODE_SINGLE || enablePreview) && imageSelectChangedListener != null) {
+                    if ((selectMode == ImageSelectorActivity.MODE_SINGLE || enablePreview)
+                            && imageSelectChangedListener != null) {
                         imageSelectChangedListener.onPictureClick(image, showCamera ? position - 1 : position);
                     } else {
                         changeCheckboxState(contentHolder, image);
@@ -149,7 +148,8 @@ public class ImageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private void changeCheckboxState(ViewHolder contentHolder, LocalMedia image) {
         boolean isChecked = contentHolder.check.isSelected();
         if (selectImages.size() >= maxSelectNum && !isChecked) {
-            Toast.makeText(context, context.getString(R.string.message_max_num, maxSelectNum), Toast.LENGTH_LONG).show();
+            Toast.makeText(context, context.getString(R.string.message_max_num, maxSelectNum), Toast.LENGTH_LONG)
+                    .show();
             return;
         }
         if (isChecked) {
@@ -188,13 +188,16 @@ public class ImageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public void selectImage(ViewHolder holder, boolean isChecked) {
         holder.check.setSelected(isChecked);
         if (isChecked) {
-            holder.picture.setColorFilter(context.getResources().getColor(R.color.image_overlay2), PorterDuff.Mode.SRC_ATOP);
+            holder.picture.setColorFilter(context.getResources().getColor(R.color.image_overlay2),
+                    PorterDuff.Mode.SRC_ATOP);
         } else {
-            holder.picture.setColorFilter(context.getResources().getColor(R.color.image_overlay), PorterDuff.Mode.SRC_ATOP);
+            holder.picture.setColorFilter(context.getResources().getColor(R.color.image_overlay),
+                    PorterDuff.Mode.SRC_ATOP);
         }
     }
 
     static class HeaderViewHolder extends RecyclerView.ViewHolder {
+
         View headerView;
 
         public HeaderViewHolder(View itemView) {
@@ -204,6 +207,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
+
         ImageView picture;
         ImageView check;
 
@@ -219,6 +223,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     public interface OnImageSelectChangedListener {
+
         void onChange(List<LocalMedia> selectImages);
 
         void onTakePhoto();

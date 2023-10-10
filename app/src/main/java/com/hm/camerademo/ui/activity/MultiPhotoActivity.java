@@ -2,9 +2,9 @@ package com.hm.camerademo.ui.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.widget.GridLayoutManager;
 import android.view.View;
 
+import androidx.recyclerview.widget.GridLayoutManager;
 import com.hm.imageslector.activity.PictureSelectActivity;
 import com.hm.imageslector.base.BaseActivity;
 import com.hm.imageslector.localImages.ImageItem;

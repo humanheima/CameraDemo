@@ -1,7 +1,7 @@
 package com.hm.imageslector.adapter;
 
-import android.databinding.ViewDataBinding;
-import android.support.v7.widget.RecyclerView;
+import androidx.databinding.ViewDataBinding;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by dumingwei on 2017/10/23.

@@ -3,14 +3,12 @@ package com.yongchun.library.utils;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
-
+import androidx.fragment.app.FragmentActivity;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.CursorLoader;
+import androidx.loader.content.Loader;
 import com.yongchun.library.model.LocalMedia;
 import com.yongchun.library.model.LocalMediaFolder;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
@@ -23,6 +21,7 @@ import java.util.List;
  * Created by dee on 15/11/19.
  */
 public class LocalMediaLoader {
+
     // load type
     public static final int TYPE_IMAGE = 1;
     public static final int TYPE_VIDEO = 2;
@@ -80,12 +79,14 @@ public class LocalMediaLoader {
                     String path = data.getString(data
                             .getColumnIndex(MediaStore.Images.Media.DATA));
                     File file = new File(path);
-                    if (!file.exists())
+                    if (!file.exists()) {
                         continue;
+                    }
                     // 获取该图片的目录路径名
                     File parentFile = file.getParentFile();
-                    if (parentFile == null || !parentFile.exists())
+                    if (parentFile == null || !parentFile.exists()) {
                         continue;
+                    }
 
                     String dirPath = parentFile.getAbsolutePath();
                     // 利用一个HashSet防止多次扫描同一个文件夹
@@ -95,8 +96,9 @@ public class LocalMediaLoader {
                         mDirPaths.add(dirPath);
                     }
 
-                    if (parentFile.list() == null)
+                    if (parentFile.list() == null) {
                         continue;
+                    }
                     LocalMediaFolder localMediaFolder = getImageFolder(path, imageFolders);
 
                     File[] files = parentFile.listFiles(new FilenameFilter() {
@@ -104,8 +106,9 @@ public class LocalMediaLoader {
                         public boolean accept(File dir, String filename) {
                             if (filename.endsWith(".jpg")
                                     || filename.endsWith(".png")
-                                    || filename.endsWith(".jpeg"))
+                                    || filename.endsWith(".jpeg")) {
                                 return true;
+                            }
                             return false;
                         }
                     });
@@ -130,7 +133,9 @@ public class LocalMediaLoader {
                 imageFolders.add(allImageFolder);
                 sortFolder(imageFolders);
                 imageLoadListener.loadComplete(imageFolders);
-                if (data != null) data.close();
+                if (data != null) {
+                    data.close();
+                }
             }
 
             @Override
@@ -171,6 +176,7 @@ public class LocalMediaLoader {
     }
 
     public interface LocalMediaLoadListener {
+
         void loadComplete(List<LocalMediaFolder> folders);
     }
 

@@ -1,17 +1,15 @@
 package com.hm.camerademo.ui.adapter;
 
 import android.content.Context;
-import android.databinding.DataBindingUtil;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-
-import com.hm.imageslector.adapter.BindingViewHolder;
-import com.hm.imageslector.localImages.ImageItem;
+import androidx.databinding.DataBindingUtil;
+import androidx.recyclerview.widget.RecyclerView;
 import com.hm.camerademo.R;
 import com.hm.camerademo.databinding.ItemInDetailBinding;
 import com.hm.camerademo.util.ImageUtil;
-
+import com.hm.imageslector.adapter.BindingViewHolder;
+import com.hm.imageslector.localImages.ImageItem;
 import java.util.List;
 
 public class ImageAdapter extends RecyclerView.Adapter<BindingViewHolder> {
@@ -35,7 +33,8 @@ public class ImageAdapter extends RecyclerView.Adapter<BindingViewHolder> {
     @Override
     public void onBindViewHolder(BindingViewHolder holder, int position) {
         ImageItem imageItem = data.get(position);
-        ImageUtil.loadLocalFile(context, ((ItemInDetailBinding) holder.getBinding()).itemImgBook, imageItem.getImagePath());
+        ImageUtil.loadLocalFile(context, ((ItemInDetailBinding) holder.getBinding()).itemImgBook,
+                imageItem.getImagePath());
     }
 
     @Override

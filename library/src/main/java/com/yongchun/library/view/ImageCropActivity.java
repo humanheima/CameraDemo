@@ -10,16 +10,14 @@ import android.net.Uri;
 import android.opengl.GLES10;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
-
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import com.isseiaoki.simplecropview.CropImageView;
 import com.yongchun.library.R;
 import com.yongchun.library.utils.CropUtil;
 import com.yongchun.library.utils.FileUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,6 +27,7 @@ import java.io.OutputStream;
  * Created by dee on 15/11/26.
  */
 public class ImageCropActivity extends AppCompatActivity {
+
     public static final String EXTRA_PATH = "extraPath";
     public static final String OUTPUT_PATH = "outputPath";
     public static final int REQUEST_CROP = 69;
@@ -72,7 +71,6 @@ public class ImageCropActivity extends AppCompatActivity {
         cropImageView = (CropImageView) findViewById(R.id.cropImageView);
         cropImageView.setHandleSizeInDp(10);
 
-
         int exifRotation = CropUtil.getExifRotation(CropUtil.getFromMediaUri(this, getContentResolver(), sourceUri));
 
         InputStream is = null;
@@ -82,9 +80,12 @@ public class ImageCropActivity extends AppCompatActivity {
             BitmapFactory.Options option = new BitmapFactory.Options();
             option.inSampleSize = sampleSize;
             Bitmap sizeBitmap = BitmapFactory.decodeStream(is, null, option);
-            if(sizeBitmap==null)return;
+            if (sizeBitmap == null) {
+                return;
+            }
             Matrix matrix = getRotateMatrix(sizeBitmap, exifRotation % 360);
-            Bitmap rotated = Bitmap.createBitmap(sizeBitmap, 0, 0, sizeBitmap.getWidth(), sizeBitmap.getHeight(), matrix, true);
+            Bitmap rotated = Bitmap.createBitmap(sizeBitmap, 0, 0, sizeBitmap.getWidth(), sizeBitmap.getHeight(),
+                    matrix, true);
             cropImageView.setImageBitmap(rotated);
         } catch (IOException e) {
             e.printStackTrace();
