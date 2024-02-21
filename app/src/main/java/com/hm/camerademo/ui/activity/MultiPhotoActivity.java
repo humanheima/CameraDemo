@@ -5,12 +5,12 @@ import android.content.Intent;
 import android.view.View;
 
 import androidx.recyclerview.widget.GridLayoutManager;
+import com.hm.camerademo.ui.adapter.ImageAdapter;
 import com.hm.imageslector.activity.PictureSelectActivity;
 import com.hm.imageslector.base.BaseActivity;
 import com.hm.imageslector.localImages.ImageItem;
 import com.hm.camerademo.R;
 import com.hm.camerademo.databinding.ActivityMultiPhotoBinding;
-import com.hm.camerademo.ui.adapter.ImageAdapter;
 
 import java.util.ArrayList;
 import java.util.List;

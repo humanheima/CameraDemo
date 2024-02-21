@@ -8,11 +8,11 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
-import androidx.core.content.FileProvider;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
-
+import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 import com.hm.camerademo.R;
 import com.hm.camerademo.databinding.ActivityMainBinding;
 import com.hm.camerademo.network.HttpResult;
@@ -20,11 +20,9 @@ import com.hm.camerademo.network.NetWork;
 import com.hm.camerademo.util.ImageUtil;
 import com.hm.imageslector.base.BaseActivity;
 import com.yongchun.library.view.ImageSelectorActivity;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -36,6 +34,10 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
+/**
+ * Created by p_dmweidu on 2024/2/21
+ * Desc:
+ */
 public class MainActivity extends BaseActivity<ActivityMainBinding> implements EasyPermissions.PermissionCallbacks {
 
     public static final int REQUEST_TAKE_PHOTO_PERMISSION = 1001;
@@ -54,11 +56,14 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements E
 
     @Override
     protected void initData() {
-        requestPermission();
+        //requestPermission();
     }
 
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.btn_new_request_permission:
+                NewRequestPermissionActivity.start(MainActivity.this);
+                break;
             case R.id.btn_take_photo:
                 takePhoto();
                 break;
@@ -88,7 +93,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements E
         if (EasyPermissions.hasPermissions(this, prems)) {
             Log.d(TAG, "have got permission");
         } else {
-            EasyPermissions.requestPermissions(MainActivity.this, "request WRITE_EXTERNAL_STORAGE permission", REQUEST_TAKE_PHOTO_PERMISSION, prems);
+            EasyPermissions.requestPermissions(MainActivity.this, "request WRITE_EXTERNAL_STORAGE permission",
+                    REQUEST_TAKE_PHOTO_PERMISSION, prems);
         }
     }
 
@@ -140,8 +146,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements E
             case REQUEST_TAKE_PHOTO_PERMISSION:
                 break;
             case SYSTEM_CROP:
-                if (resultCode == RESULT_OK)
+                if (resultCode == RESULT_OK) {
                     Log.e(TAG, "SYSTEM_CROP");
+                }
                 ImageUtil.load(MainActivity.this, cropFile.getPath(), viewBind.imgPreview);
                 break;
             default:
@@ -163,10 +170,12 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements E
         //intent.putExtra("scale", true);  //是否保持比例
         //intent.putExtra("return-data", false);  //是否返回bitmap
         //将存储图片的uri读写权限授权给剪裁工具应用
-        List<ResolveInfo> resInfoList = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        List<ResolveInfo> resInfoList = getPackageManager().queryIntentActivities(intent,
+                PackageManager.MATCH_DEFAULT_ONLY);
         for (ResolveInfo resolveInfo : resInfoList) {
             String packageName = resolveInfo.activityInfo.packageName;
-            grantUriPermission(packageName, cropUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            grantUriPermission(packageName, cropUri,
+                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
         }
         startActivityForResult(intent, SYSTEM_CROP);
     }
@@ -203,7 +212,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements E
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        Toast.makeText(MainActivity.this, "压缩失败" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "压缩失败" + throwable.getMessage(), Toast.LENGTH_SHORT)
+                                .show();
                     }
                 });
     }
@@ -314,4 +324,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements E
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+            @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 }
