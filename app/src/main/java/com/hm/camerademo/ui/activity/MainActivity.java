@@ -1,6 +1,7 @@
 package com.hm.camerademo.ui.activity;
 
 import android.Manifest;
+import android.Manifest.permission;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -17,6 +18,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import com.bumptech.glide.Glide;
 import com.hm.camerademo.R;
 import com.hm.camerademo.databinding.ActivityMainBinding;
 import com.hm.camerademo.network.HttpResult;
@@ -91,9 +93,12 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     }
 
     private void requestPermission() {
-        String[] prems = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
+        String[] prems = {Manifest.permission.WRITE_EXTERNAL_STORAGE, permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.CAMERA};
         if (ContextCompat.checkSelfPermission(this, prems[0]) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, prems[1]) == PackageManager.PERMISSION_GRANTED) {
+                && ContextCompat.checkSelfPermission(this, prems[1]) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, prems[2]) == PackageManager.PERMISSION_GRANTED
+        ) {
             Log.d(TAG, "have got permission");
         } else {
             ActivityResultLauncher<String[]> requestPermissionLauncher = getActivityResultRegistry().register(
