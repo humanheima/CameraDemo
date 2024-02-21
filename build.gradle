@@ -39,4 +39,6 @@ ext {
 
     appcompatVersion = "1.6.1"
     recyclerviewVersion = "1.3.2"
+
+    glideVersion = "4.16.0"
 }

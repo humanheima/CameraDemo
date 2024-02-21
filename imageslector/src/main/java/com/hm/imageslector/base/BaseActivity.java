@@ -1,13 +1,14 @@
 package com.hm.imageslector.base;
 
+import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
-import android.os.Bundle;
-import androidx.annotation.NonNull;
 
-import pub.devrel.easypermissions.EasyPermissions;
-
+/**
+ * Created by p_dmweidu on 2024/2/21
+ * Desc: BaseActivity
+ */
 public abstract class BaseActivity<V extends ViewDataBinding> extends AppCompatActivity {
 
     protected final String TAG = getClass().getSimpleName();
@@ -40,9 +41,4 @@ public abstract class BaseActivity<V extends ViewDataBinding> extends AppCompatA
 
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }
 }

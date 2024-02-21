@@ -1,6 +1,7 @@
 package com.hm.camerademo.ui.activity;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -8,10 +9,13 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
-import androidx.annotation.NonNull;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import com.hm.camerademo.R;
 import com.hm.camerademo.databinding.ActivityMainBinding;
@@ -26,8 +30,6 @@ import java.util.List;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import pub.devrel.easypermissions.AppSettingsDialog;
-import pub.devrel.easypermissions.EasyPermissions;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -38,7 +40,7 @@ import rx.schedulers.Schedulers;
  * Created by p_dmweidu on 2024/2/21
  * Desc:
  */
-public class MainActivity extends BaseActivity<ActivityMainBinding> implements EasyPermissions.PermissionCallbacks {
+public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
     public static final int REQUEST_TAKE_PHOTO_PERMISSION = 1001;
     public static final int CHOOSE_FROM_ALBUM = 1002;
@@ -56,7 +58,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements E
 
     @Override
     protected void initData() {
-        //requestPermission();
+        requestPermission();
     }
 
     public void onClick(View view) {
@@ -90,12 +92,42 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements E
 
     private void requestPermission() {
         String[] prems = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
-        if (EasyPermissions.hasPermissions(this, prems)) {
+        if (ContextCompat.checkSelfPermission(this, prems[0]) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, prems[1]) == PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "have got permission");
         } else {
-            EasyPermissions.requestPermissions(MainActivity.this, "request WRITE_EXTERNAL_STORAGE permission",
-                    REQUEST_TAKE_PHOTO_PERMISSION, prems);
+            ActivityResultLauncher<String[]> requestPermissionLauncher = getActivityResultRegistry().register(
+                    "activity_rq_multi_permission",
+                    new ActivityResultContracts.RequestMultiplePermissions(), result -> {
+                        if (result == null) {
+                            showToast("权限申请失败");
+                            return;
+                        }
+                        if (Boolean.TRUE.equals(result.get(android.Manifest.permission.CAMERA)) && Boolean.TRUE.equals(
+                                result.get(
+                                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE))) {
+                            showToast("权限申请成功");
+                        } else {
+                            showSettingDialog("权限申请失败，部分权限未通过，请手动设置");
+                        }
+                    });
+
+            requestPermissionLauncher.launch(prems);
         }
+    }
+
+    private void showSettingDialog(String tips) {
+        new AlertDialog.Builder(this).setTitle(tips).setMessage(tips)
+                .setPositiveButton("去设置", (dialog, which) -> {
+                    openAppSettings();
+                }).setNegativeButton("取消", null).show();
+    }
+
+    private void openAppSettings() {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", getPackageName(), null);
+        intent.setData(uri);
+        startActivity(intent);
     }
 
     private void takePhoto() {
@@ -302,31 +334,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements E
                 });
     }
 
-    @Override
-    public void onPermissionsGranted(int requestCode, List<String> perms) {
-        switch (requestCode) {
-            case REQUEST_TAKE_PHOTO_PERMISSION:
-                Toast.makeText(MainActivity.this, "have got permission", Toast.LENGTH_SHORT).show();
-                break;
-            default:
-                break;
-        }
+
+    private void showToast(String text) {
+        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    public void onPermissionsDenied(int requestCode, List<String> perms) {
-        Log.e(TAG, "onPermissionsDenied");
-        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
-            new AppSettingsDialog.Builder(this)
-                    .setRequestCode(REQUEST_TAKE_PHOTO_PERMISSION)
-                    .setRationale("请在应用中开启所需的权限")
-                    .build().show();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-            @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
 }
