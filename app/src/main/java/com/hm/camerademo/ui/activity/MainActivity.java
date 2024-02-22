@@ -3,6 +3,7 @@ package com.hm.camerademo.ui.activity;
 import android.Manifest;
 import android.Manifest.permission;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -18,21 +19,24 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
-import com.bumptech.glide.Glide;
 import com.hm.camerademo.R;
 import com.hm.camerademo.databinding.ActivityMainBinding;
 import com.hm.camerademo.network.HttpResult;
 import com.hm.camerademo.network.NetWork;
 import com.hm.camerademo.util.ImageUtil;
 import com.hm.imageslector.base.BaseActivity;
+import com.hm.imageslector.localImages.ImageItem;
 import com.yongchun.library.view.ImageSelectorActivity;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import rx.Observable;
+import rx.Observable.OnSubscribe;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
@@ -87,9 +91,48 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                 ImageSelectorActivity.start(MainActivity.this,
                         9, ImageSelectorActivity.MODE_MULTIPLE, false, true, false);
                 break;
+
+            case R.id.btn_test_content_resolver:
+                getAllImages(MainActivity.this);
+                break;
             default:
                 break;
         }
+    }
+
+    public void getAllImages(Context context) {
+        Observable.create(new OnSubscribe<List<ImageItem>>() {
+                    @Override
+                    public void call(Subscriber<? super List<ImageItem>> subscriber) {
+                        List<ImageItem> images = new ArrayList<>();
+                        Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                        String[] projection = {MediaStore.Images.Media._ID, MediaStore.Images.Media.DATA};
+                        Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
+                        if (cursor != null) {
+                            while (cursor.moveToNext()) {
+                                int id = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID));
+                                String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA));
+                                ImageItem imageItem = new ImageItem();
+                                imageItem.setId(String.valueOf(id));
+                                imageItem.setImagePath(path);
+                                images.add(imageItem);
+                            }
+                            cursor.close();
+                        }
+                        subscriber.onNext(images);
+                        subscriber.onCompleted();
+                    }
+                }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<List<ImageItem>>() {
+                    @Override
+                    public void call(List<ImageItem> uris) {
+                        for (ImageItem uri : uris) {
+                            Log.e(TAG, "call: " + uri.getImagePath());
+                        }
+                    }
+                });
+
     }
 
     private void requestPermission() {

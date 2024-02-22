@@ -1,20 +1,24 @@
-package com.hm.camerademo;
+package com.hm.camerademo
 
-import android.app.Application;
-import android.content.Context;
+import android.app.Application
+import android.content.Context
 
-public class App extends Application {
-
-    private static Application context;
+class App : Application() {
 
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        context = this;
+    companion object {
+
+        private var mContext: Application? = null
+
+        @JvmStatic
+        val instance: Context?
+            get() = mContext
     }
 
-    public static Context getInstance() {
-        return context;
+    override fun onCreate() {
+        super.onCreate()
+        mContext = this
     }
+
+
 }

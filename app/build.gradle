@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -64,4 +65,8 @@ dependencies {
     implementation 'com.commit451:PhotoView:1.2.4'
     implementation project(':library')
     implementation project(':imageslector')
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+
+
 }

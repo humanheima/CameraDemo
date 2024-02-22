@@ -13,11 +13,9 @@ import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.ImageView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.imageslector.R;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -29,7 +27,6 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-
 import rx.Observable;
 import rx.Subscriber;
 
@@ -82,6 +79,7 @@ public class ImageUtil {
     }
 
     public static void loadSmallFile(Context context, ImageView imageView, String url) {
+        Log.i(TAG, "loadSmallFile: url = " + url);
         Glide.with(context)
                 .load(new File(url))
                 .apply(smallOptions)
@@ -100,7 +98,8 @@ public class ImageUtil {
         File storageDir;
         String timeStamp = dateFormat.format(new Date());
         try {
-            storagePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath() + File.separator + "camerademo";
+            storagePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath()
+                    + File.separator + "camerademo";
             //storagePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath() + File.separator + "camerademo";
             //storagePath = App.getInstance().getExternalFilesDir(Environment.DIRECTORY_PICTURES).getAbsolutePath();
             //storagePath = App.getInstance().getExternalCacheDir().getAbsolutePath() + File.separator + "camerademo";
@@ -168,8 +167,9 @@ public class ImageUtil {
             input.close();
             int originalWidth = options.outWidth;
             int originalHeight = options.outHeight;
-            if ((originalWidth == -1) || (originalHeight == -1))
+            if ((originalWidth == -1) || (originalHeight == -1)) {
                 return null;
+            }
             options.inSampleSize = calculateInSampleSize(options, 480, 800);//设置缩放比例
             options.inJustDecodeBounds = false;
             input = ac.getContentResolver().openInputStream(uri);
@@ -193,8 +193,8 @@ public class ImageUtil {
     }
 
     /**
-     * @param options   options
-     * @param reqWidth  目标宽度
+     * @param options options
+     * @param reqWidth 目标宽度
      * @param reqHeight 目标高度
      * @return inSampleSize 指示了在解析图片为Bitmap时在长宽两个方向上像素缩小的倍数
      */
@@ -244,7 +244,7 @@ public class ImageUtil {
     /**
      * 压缩图片处理某些手机拍照角度旋转的问题。
      *
-     * @param context  上下文对象
+     * @param context 上下文对象
      * @param filePath 图片地址
      * @param quantity 压缩质量
      * @return
@@ -268,14 +268,15 @@ public class ImageUtil {
             mediaScanIntent.setData(contentUri);
             context.sendBroadcast(mediaScanIntent);
         } else {
-            context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + imageFile.getAbsoluteFile())));
+            context.sendBroadcast(
+                    new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + imageFile.getAbsoluteFile())));
         }
         return imageFile.getPath();
     }
 
     /**
-     * @param context  上下文对象
-     * @param bitmap   要存在
+     * @param context 上下文对象
+     * @param bitmap 要存在
      * @param quantity 压缩质量
      * @return 存储的压缩后的路径
      * @throws FileNotFoundException
@@ -293,7 +294,8 @@ public class ImageUtil {
             mediaScanIntent.setData(contentUri);
             context.sendBroadcast(mediaScanIntent);
         } else {
-            context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + imageFile.getAbsoluteFile())));
+            context.sendBroadcast(
+                    new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + imageFile.getAbsoluteFile())));
         }
         return imageFile.getPath();
     }
@@ -333,7 +335,7 @@ public class ImageUtil {
     /**
      * 将图片按照某个角度进行旋转
      *
-     * @param bm     需要旋转的图片
+     * @param bm 需要旋转的图片
      * @param degree 旋转角度
      * @return 旋转后的图片
      */
@@ -387,7 +389,8 @@ public class ImageUtil {
                 mediaScanIntent.setData(contentUri);
                 context.sendBroadcast(mediaScanIntent);
             } else {
-                context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + imageFile.getAbsoluteFile())));
+                context.sendBroadcast(
+                        new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + imageFile.getAbsoluteFile())));
             }
             if (imageFile.exists()) {
                 return imageFile.getAbsolutePath();

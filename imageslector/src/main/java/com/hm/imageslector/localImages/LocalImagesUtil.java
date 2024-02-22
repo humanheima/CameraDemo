@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.provider.MediaStore;
 import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -83,15 +82,16 @@ public class LocalImagesUtil {
             while (cur.moveToNext()) {
                 String _id = cur.getString(cur.getColumnIndexOrThrow(MediaStore.Images.Media._ID));
                 String path = cur.getString(cur.getColumnIndexOrThrow(MediaStore.Images.Media.DATA));
-                long time = cur.getLong(cur.getColumnIndex(MediaStore.Images.Media.DATE_ADDED));
+                long time = cur.getLong(cur.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED));
                 String bucketId = cur.getString(cur.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_ID));
-                String bucketName = cur.getString(cur.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME));
+                String bucketName = cur.getString(
+                        cur.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME));
                 ImageBucket bucket = bucketMap.get(bucketId);
                 if (bucket == null) {
                     bucket = new ImageBucket();
                     bucket.setSelected(false);
                     bucketMap.put(bucketId, bucket);
-                    bucket.setImageList(new ArrayList<ImageItem>());
+                    bucket.setImageList(new ArrayList<>());
                     bucket.setBucketName(bucketName);
                 }
                 ImageItem imageItem = new ImageItem();
