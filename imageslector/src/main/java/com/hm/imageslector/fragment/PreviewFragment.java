@@ -1,24 +1,22 @@
 package com.hm.imageslector.fragment;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.transition.Transition;
 import com.example.imageslector.R;
-
 import java.io.File;
+import uk.co.senab.photoview.PhotoView;
 
-import uk.co.senab.photoview.PhotoViewAttacher;
-
+/**
+ * Created by p_dmweidu on 2024/2/23
+ * Desc: 图片预览的Fragment
+ */
 public class PreviewFragment extends Fragment {
 
     private final String TAG = getClass().getName();
@@ -42,21 +40,33 @@ public class PreviewFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+            @Nullable Bundle savedInstanceState) {
+        Log.i(TAG, "onCreateView: strUrl = " + strUrl);
         final View v = inflater.inflate(R.layout.fragment_preview, container, false);
-        final ImageView imageView = v.findViewById(R.id.image);
-        final PhotoViewAttacher mAttacher = new PhotoViewAttacher(imageView);
-        // TODO: 2018/2/8 0008 不明白为什么要这样写
-        Glide.with(this)
-                .asBitmap()
-                .load(new File(strUrl))
-                .into(new SimpleTarget<Bitmap>(480, 800) {
-                    @Override
-                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                        imageView.setImageBitmap(resource);
-                        mAttacher.update();
-                    }
-                });
+        final PhotoView imageView = v.findViewById(R.id.photo_view);
+
+        //Note: 在ViewPager中使用PhotoView时，滑动有点冲突，后面换一个库
+        Glide.with(this).load(new File(strUrl)).into(imageView);
+
+        //final PhotoViewAttacher mAttacher = new PhotoViewAttacher(imageView);
+
+//        Glide.with(this)
+//                .asBitmap()
+//                .load(new File(strUrl))
+//                .into(new CustomTarget<Bitmap>() {
+//                    @Override
+//                    public void onResourceReady(@NonNull Bitmap resource,
+//                            @Nullable Transition<? super Bitmap> transition) {
+//                        imageView.setImageBitmap(resource);
+//                        mAttacher.update();
+//                    }
+//
+//                    @Override
+//                    public void onLoadCleared(@Nullable Drawable placeholder) {
+//
+//                    }
+//                });
         return v;
     }
 }
