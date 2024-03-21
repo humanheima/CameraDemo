@@ -9,6 +9,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.hm.camerademo.R
 import com.hm.camerademo.databinding.ActivityAndroid11StoragePermissionTestBinding
+import com.hm.camerademo.util.ImageUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -48,7 +49,9 @@ class Android11StoragePermissionTestActivity : AppCompatActivity() {
         binding.btnGetExternalFiles.setOnClickListener {
             test2()
         }
-
+        binding.btnGetOtherAppExternalFiles.setOnClickListener {
+            test3()
+        }
     }
 
     /**
@@ -94,8 +97,32 @@ class Android11StoragePermissionTestActivity : AppCompatActivity() {
 
             this@Android11StoragePermissionTestActivity.getExternalFilesDir(android.os.Environment.DIRECTORY_PICTURES)
                 ?.listFiles()?.forEach {
-                Log.i(TAG, "test2: file: ${it.absolutePath}")
+                    Log.i(TAG, "test2: file: ${it.absolutePath}")
+                }
+        }
+    }
+
+    /**
+     * targetSdkVersion >= 30 时，Android10 要有读写权限，并且在 AndroidManifest.xml 中声明 requestLegacyExternalStorage=true
+     */
+    private fun test3() {
+        GlobalScope.launch(Dispatchers.Main) {
+            //其他应用的包名 com.hm.viewdemo
+            var lastPngFilePath: String? = null
+            val otherAppExternalFileDir =
+                File("/storage/emulated/0/Android/data/com.hm.viewdemo/files/bubblepng")
+            otherAppExternalFileDir.listFiles()?.forEach {
+                val path = " ${it.absolutePath}"
+                Log.i(TAG, "test3: file:$path")
+                if (path.endsWith(".png")){
+                    lastPngFilePath = it.absolutePath
+                }
             }
+            ImageUtil.load(
+                this@Android11StoragePermissionTestActivity,
+                lastPngFilePath,
+                binding.ivBigImage
+            )
         }
     }
 

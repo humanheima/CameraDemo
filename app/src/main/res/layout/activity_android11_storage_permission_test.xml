@@ -1,22 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         tools:context=".ui.activity.Android11StoragePermissionTestActivity">
-    
+
+    <ImageView
+            android:id="@+id/iv_big_image"
+            android:layout_width="match_parent"
+            android:scaleType="centerCrop"
+            android:layout_height="200dp" />
+
     <Button
             android:id="@+id/btn_get_files"
             android:layout_width="match_parent"
             android:text="获取应用专属文件，内部存储文件"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
     <Button
             android:id="@+id/btn_get_external_files"
             android:layout_width="match_parent"
             android:text="获取应用专属文件，外部存储文件"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
+
+    <Button
+            android:id="@+id/btn_get_other_app_external_files"
+            android:layout_width="match_parent"
+            android:text="获取其他应用文件，外部存储文件"
+            android:layout_height="wrap_content" />
 </LinearLayout>

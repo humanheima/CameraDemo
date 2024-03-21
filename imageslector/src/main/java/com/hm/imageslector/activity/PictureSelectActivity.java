@@ -8,24 +8,21 @@ import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
-
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.imageslector.R;
+import com.example.imageslector.databinding.ActivityPictureSelectBinding;
 import com.hm.imageslector.adapter.BucketAdapter;
 import com.hm.imageslector.adapter.PictureSelectAdapter;
 import com.hm.imageslector.base.BaseActivity;
-import com.example.imageslector.databinding.ActivityPictureSelectBinding;
 import com.hm.imageslector.listener.OnItemClickListener;
 import com.hm.imageslector.localImages.ImageBucket;
 import com.hm.imageslector.localImages.ImageItem;
 import com.hm.imageslector.localImages.LocalImagesUtil;
 import com.hm.imageslector.util.ListUtil;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
@@ -71,14 +68,14 @@ public class PictureSelectActivity extends BaseActivity<ActivityPictureSelectBin
         initRv();
         initBuckets();
         Observable.create(new Observable.OnSubscribe<List<ImageBucket>>() {
-            @Override
-            public void call(Subscriber<? super List<ImageBucket>> subscriber) {
-                List<ImageBucket> bucketList = LocalImagesUtil.getInstance(PictureSelectActivity.this)
-                        .getBucketList();
-                subscriber.onNext(bucketList);
-                subscriber.onCompleted();
-            }
-        }).subscribeOn(Schedulers.io())
+                    @Override
+                    public void call(Subscriber<? super List<ImageBucket>> subscriber) {
+                        List<ImageBucket> bucketList = LocalImagesUtil.getInstance(PictureSelectActivity.this)
+                                .getBucketList();
+                        subscriber.onNext(bucketList);
+                        subscriber.onCompleted();
+                    }
+                }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<ImageBucket>>() {
                     @Override
@@ -117,7 +114,10 @@ public class PictureSelectActivity extends BaseActivity<ActivityPictureSelectBin
         viewBind.rvBucket.post(new Runnable() {
             @Override
             public void run() {
-                viewBind.rvBucket.setTranslationY(viewBind.rvBucket.getHeight());
+                int rvBucketHeight = viewBind.rvBucket.getHeight();
+                Log.i(TAG, "run: rvBucketHeight=" + rvBucketHeight);
+
+                viewBind.rvBucket.setTranslationY(rvBucketHeight);
                 viewBind.rvBucket.setVisibility(View.GONE);
             }
         });
@@ -257,12 +257,12 @@ public class PictureSelectActivity extends BaseActivity<ActivityPictureSelectBin
     }
 
     /**
-     * @param position   在预览界面显示第几张图片
+     * @param position 在预览界面显示第几张图片
      * @param previewAll 是否预览当前界面所有的图片
-     *                   false 只预览选中的图片{@link #selectedList}
-     *                   true 预览当前界面所有的图片{@link #imageList}包括两种情况：
-     *                   1.没有选中的图片{@link #selectedList}是空的
-     *                   2有选中的图片{@link #selectedList}不为空
+     *         false 只预览选中的图片{@link #selectedList}
+     *         true 预览当前界面所有的图片{@link #imageList}包括两种情况：
+     *         1.没有选中的图片{@link #selectedList}是空的
+     *         2有选中的图片{@link #selectedList}不为空
      */
     public void preview(int position, boolean previewAll) {
         if (previewAll) {

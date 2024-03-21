@@ -67,27 +67,28 @@ public class LocalImagesUtil {
      */
     public List<ImageBucket> getBucketList() {
         bucketMap.clear();
-        String columns[] = new String[]{
+        String[] columns = new String[]{
                 MediaStore.Images.Media._ID,
                 MediaStore.Images.Media.DATA,
                 MediaStore.Images.Media.BUCKET_ID,
                 MediaStore.Images.Media.DATE_ADDED,
                 MediaStore.Images.Media.BUCKET_DISPLAY_NAME};
 
-        Cursor cur = cr.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, columns, null, null,
+        Cursor cursor = cr.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, columns, null, null,
                 MediaStore.Images.Media.DATE_ADDED + " DESC");
 
-        if (null != cur) {
-            Log.e(TAG, "buildImagesBucketList: totalNum is" + cur.getCount());
-            while (cur.moveToNext()) {
-                String _id = cur.getString(cur.getColumnIndexOrThrow(MediaStore.Images.Media._ID));
-                String path = cur.getString(cur.getColumnIndexOrThrow(MediaStore.Images.Media.DATA));
-                long time = cur.getLong(cur.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED));
-                String bucketId = cur.getString(cur.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_ID));
-                String bucketName = cur.getString(
-                        cur.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME));
+        if (null != cursor) {
+            Log.e(TAG, "buildImagesBucketList: totalNum is" + cursor.getCount());
+            while (cursor.moveToNext()) {
+                String _id = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID));
+                String path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA));
+                long time = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED));
+                String bucketId = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_ID));
+                String bucketName = cursor.getString(
+                        cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME));
                 ImageBucket bucket = bucketMap.get(bucketId);
                 if (bucket == null) {
+                    Log.i(TAG, "getBucketList: bucketId is" + bucketId + " bucketName is = " + bucketName);
                     bucket = new ImageBucket();
                     bucket.setSelected(false);
                     bucketMap.put(bucketId, bucket);
@@ -101,9 +102,9 @@ public class LocalImagesUtil {
                 bucket.getImageList().add(imageItem);
                 bucket.setCount(bucket.getImageList().size());
             }
-            cur.close();
+            cursor.close();
             List<ImageBucket> bucketList = new ArrayList<>();
-            //所有图片
+            //Note: 把所有的bucket中的图片都放到一个bucket中：所有图片
             ImageBucket allBucket = new ImageBucket();
             allBucket.setSelected(true);
             allBucket.setBucketName("所有图片");

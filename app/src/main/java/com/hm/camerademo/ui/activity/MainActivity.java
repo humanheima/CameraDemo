@@ -64,7 +64,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
     @Override
     protected void initData() {
-        //requestPermission();
+        requestPermission();
     }
 
     public void onClick(View view) {
@@ -129,9 +129,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<List<ImageItem>>() {
                     @Override
-                    public void call(List<ImageItem> uris) {
-                        for (ImageItem uri : uris) {
-                            Log.e(TAG, "call: " + uri.getImagePath());
+                    public void call(List<ImageItem> imageItems) {
+                        for (ImageItem imageItem : imageItems) {
+                            Log.e(TAG, "call: " + imageItem);
                         }
                     }
                 });
@@ -212,12 +212,14 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                 break;
             case CHOOSE_FROM_ALBUM:
                 if (resultCode == RESULT_OK) {
+                    //Unable to decode stream: java.io.FileNotFoundException: /storage/emulated/0/DCIM/camerademo/20231010-16:43:044541434019456215797.jpg: open failed: EACCES (Permission denied)
                     String imgPath;
-                    if (data.getData().toString().startsWith("content")) {
+                    if (data.getData().toString().startsWith("content")) {//content://media/external/images/media/1795
                         String[] proj = {MediaStore.Images.Media.DATA};
                         Cursor cursor = getContentResolver().query(data.getData(), proj, null, null, null);
                         int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
                         cursor.moveToFirst();
+                        //storage/emulated/0/baidu/searchbox/downloads/af1a-kcieyvz6748456.jpg
                         imgPath = cursor.getString(column_index);
                         cursor.close();
                     } else {

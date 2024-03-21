@@ -1,7 +1,6 @@
 package com.hm.imageslector.localImages;
 
 import androidx.annotation.NonNull;
-
 import java.io.Serializable;
 
 public class ImageItem implements Comparable<ImageItem>, Serializable {
@@ -72,5 +71,13 @@ public class ImageItem implements Comparable<ImageItem>, Serializable {
         } else {
             return -1;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "ImageItem{" +
+                "id='" + id + '\'' +
+                ", imagePath='" + imagePath + '\'' +
+                '}';
     }
 }
