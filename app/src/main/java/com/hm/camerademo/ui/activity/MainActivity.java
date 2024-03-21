@@ -64,11 +64,14 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
     @Override
     protected void initData() {
-        requestPermission();
+        //requestPermission();
     }
 
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.btn_storage_test:
+                Android11StoragePermissionTestActivity.launch(MainActivity.this);
+                break;
             case R.id.btn_new_request_permission:
                 NewRequestPermissionActivity.start(MainActivity.this);
                 break;

@@ -33,6 +33,7 @@ Null extracted folder for artifact: ResolvedArtifact(componentIdentifier=android
 implementation 'androidx.core:core-ktx:+'
 ```
 
+### 关于分区存储
 
 ### 参考链接
 [ioneday/ImageSelector](https://github.com/ioneday/ImageSelector)

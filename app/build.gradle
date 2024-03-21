@@ -21,6 +21,10 @@ android {
         enabled true
     }
 
+    viewBinding {
+        enabled = true
+    }
+
     packagingOptions {
         exclude 'META-INF/rxjava.properties'
     }
@@ -67,6 +71,7 @@ dependencies {
     implementation project(':imageslector')
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.2'
 
 
 }
