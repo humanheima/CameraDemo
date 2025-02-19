@@ -44,7 +44,8 @@ import rx.Subscriber;
 public class ImageUtil {
 
     private static final String TAG = "ImageUtil";
-    private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HH:mm:ss", Locale.CHINA);
+    //private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HH:mm:ss", Locale.CHINA);
+    private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HH_mm_ss", Locale.CHINA);
 
     private static RequestOptions options = new RequestOptions()
             .placeholder(R.drawable.ic_placeholder)
@@ -114,6 +115,7 @@ public class ImageUtil {
             //storagePath = App.getInstance().getFilesDir().getAbsolutePath() + File.separator + "images";
             storageDir = new File(storagePath);
             storageDir.mkdirs();
+            //yyyyMMdd-HH:mm:ss，这种格式会报错，errorOperation not permitted
             imageFile = File.createTempFile(timeStamp, ".jpg", storageDir);
             Log.e(TAG, imageFile.getAbsolutePath());
         } catch (IOException e) {

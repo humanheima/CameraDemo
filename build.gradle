@@ -43,4 +43,7 @@ ext {
     glideVersion = "4.16.0"
 
     simplecropviewVersion = "1.1.8"
+
+    rxJavaVersion = '2.1.10'
+    rxAndroidVersion = '2.0.2'
 }

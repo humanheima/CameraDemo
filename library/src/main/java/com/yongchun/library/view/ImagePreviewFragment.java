@@ -6,15 +6,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.github.chrisbanes.photoview.OnPhotoTapListener;
+import com.github.chrisbanes.photoview.PhotoViewAttacher;
 import com.yongchun.library.R;
+
 import java.io.File;
-import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**
  * Created by dee on 15/11/25.
@@ -44,18 +48,19 @@ public class ImagePreviewFragment extends Fragment {
                 .into(new SimpleTarget<Bitmap>(480, 800) {
                     @Override
                     public void onResourceReady(@NonNull Bitmap resource,
-                            @Nullable Transition<? super Bitmap> transition) {
+                                                @Nullable Transition<? super Bitmap> transition) {
                         imageView.setImageBitmap(resource);
                         mAttacher.update();
                     }
                 });
-        mAttacher.setOnViewTapListener(new PhotoViewAttacher.OnViewTapListener() {
+        mAttacher.setOnPhotoTapListener(new OnPhotoTapListener() {
             @Override
-            public void onViewTap(View view, float x, float y) {
+            public void onPhotoTap(ImageView view, float x, float y) {
                 ImagePreviewActivity activity = (ImagePreviewActivity) getActivity();
                 activity.switchBarVisibility();
             }
         });
+
         return contentView;
     }
 }

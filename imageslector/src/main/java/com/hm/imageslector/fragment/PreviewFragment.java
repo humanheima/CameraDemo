@@ -5,13 +5,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
 import com.bumptech.glide.Glide;
 import com.example.imageslector.R;
+import com.github.chrisbanes.photoview.PhotoView;
+
 import java.io.File;
-import uk.co.senab.photoview.PhotoView;
 
 /**
  * Created by p_dmweidu on 2024/2/23
@@ -41,7 +44,7 @@ public class PreviewFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-            @Nullable Bundle savedInstanceState) {
+                             @Nullable Bundle savedInstanceState) {
         Log.i(TAG, "onCreateView: strUrl = " + strUrl);
         final View v = inflater.inflate(R.layout.fragment_preview, container, false);
         final PhotoView imageView = v.findViewById(R.id.photo_view);

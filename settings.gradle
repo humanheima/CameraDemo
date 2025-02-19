@@ -1,1 +1,2 @@
 include ':app', ':library', ':imageslector'
+include ':simplecropview'

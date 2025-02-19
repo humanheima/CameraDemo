@@ -29,9 +29,10 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:${rootProject.ext.recyclerviewVersion}"
     implementation "com.github.bumptech.glide:glide:${rootProject.ext.glideVersion}"
     annotationProcessor "com.github.bumptech.glide:compiler:${rootProject.ext.glideVersion}"
-    compileOnly 'com.commit451:PhotoView:1.2.4'
-    implementation "com.isseiaoki:simplecropview:${rootProject.ext.simplecropviewVersion}"
+    //compileOnly 'com.commit451:PhotoView:1.2.4'
+    compileOnly 'com.github.chrisbanes:PhotoView:2.0.0'
 
+    implementation project(":simplecropview")
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
