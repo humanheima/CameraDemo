@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/imageslector" />
             <option value="$PROJECT_DIR$/library" />
+            <option value="$PROJECT_DIR$/simplecropview" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />

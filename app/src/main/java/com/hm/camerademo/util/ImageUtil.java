@@ -33,7 +33,6 @@ import java.util.Locale;
 import rx.Observable;
 import rx.Subscriber;
 
-
 /**
  * Created by dumingwei on 2017/1/5.
  * 质量压缩不能用bitmap的形式进行压缩
@@ -96,7 +95,6 @@ public class ImageUtil {
                 .into(imageView);
     }
 
-
     /**
      * 创建图片File对象
      *
@@ -115,7 +113,10 @@ public class ImageUtil {
             //storagePath = App.getInstance().getFilesDir().getAbsolutePath() + File.separator + "images";
             storageDir = new File(storagePath);
             storageDir.mkdirs();
-            //yyyyMMdd-HH:mm:ss，这种格式会报错，errorOperation not permitted
+            /**
+             * yyyyMMdd-HH:mm:ss，这种格式会报错，errorOperation not permitted
+             * https://blog.csdn.net/minusn/article/details/128970985
+             */
             imageFile = File.createTempFile(timeStamp, ".jpg", storageDir);
             Log.e(TAG, imageFile.getAbsolutePath());
         } catch (IOException e) {
@@ -124,7 +125,6 @@ public class ImageUtil {
         }
         return imageFile;
     }
-
 
     public static Bitmap getSampledBitmapFromResource(Resources res, int resId, int reqWidth, int reqHeight) {
         // First decode with inJustDecodeBounds=true to check dimensions
@@ -306,7 +306,6 @@ public class ImageUtil {
         }
         return imageFile.getPath();
     }
-
 
     /**
      * 读取图片的旋转的角度
