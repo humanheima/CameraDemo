@@ -12,12 +12,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
 import com.isseiaoki.simplecropview.CropImageView;
 import com.yongchun.library.R;
 import com.yongchun.library.utils.CropUtil;
 import com.yongchun.library.utils.FileUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,6 +32,7 @@ import java.io.OutputStream;
 public class ImageCropActivity extends AppCompatActivity {
 
     public static final String EXTRA_PATH = "extraPath";
+    public static final String EXTRA_URI = "extraUri";
     public static final String OUTPUT_PATH = "outputPath";
     public static final int REQUEST_CROP = 69;
     private static final int SIZE_DEFAULT = 2048;
@@ -37,7 +41,6 @@ public class ImageCropActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TextView doneText;
     private CropImageView cropImageView;
-
 
     private Uri sourceUri;
     private Uri saveUri;
@@ -50,25 +53,37 @@ public class ImageCropActivity extends AppCompatActivity {
         activity.startActivityForResult(intent, REQUEST_CROP);
     }
 
+    public static void startCrop(Activity activity, Uri uri) {
+        Intent intent = new Intent(activity, ImageCropActivity.class);
+        intent.putExtra(EXTRA_URI, uri);
+        activity.startActivityForResult(intent, REQUEST_CROP);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_crop);
-        String path = getIntent().getStringExtra(EXTRA_PATH);
-        sourceUri = Uri.fromFile(new File(path));
+
+        Uri uri = getIntent().getParcelableExtra(EXTRA_URI);
+        if (uri != null) {
+            sourceUri = uri;
+        } else {
+            String path = getIntent().getStringExtra(EXTRA_PATH);
+            sourceUri = Uri.fromFile(new File(path));
+        }
 
         initView();
         registerListener();
     }
 
     public void initView() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.mipmap.ic_back);
 
-        doneText = (TextView) findViewById(R.id.done_text);
-        cropImageView = (CropImageView) findViewById(R.id.cropImageView);
+        doneText = findViewById(R.id.done_text);
+        cropImageView = findViewById(R.id.cropImageView);
         cropImageView.setHandleSizeInDp(10);
 
         int exifRotation = CropUtil.getExifRotation(CropUtil.getFromMediaUri(this, getContentResolver(), sourceUri));
@@ -95,7 +110,6 @@ public class ImageCropActivity extends AppCompatActivity {
             CropUtil.closeSilently(is);
         }
     }
-
 
     public void registerListener() {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {

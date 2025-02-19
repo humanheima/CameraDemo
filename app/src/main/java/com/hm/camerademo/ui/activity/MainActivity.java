@@ -15,10 +15,12 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+
 import com.hm.camerademo.R;
 import com.hm.camerademo.databinding.ActivityMainBinding;
 import com.hm.camerademo.network.HttpResult;
@@ -26,11 +28,14 @@ import com.hm.camerademo.network.NetWork;
 import com.hm.camerademo.util.ImageUtil;
 import com.hm.imageslector.base.BaseActivity;
 import com.hm.imageslector.localImages.ImageItem;
+import com.yongchun.library.view.ImageCropActivity;
 import com.yongchun.library.view.ImageSelectorActivity;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -208,6 +213,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                 if (resultCode == RESULT_OK) {
                     //processTakePhoto(photoFile.getPath());
                     cropPhoto();
+                    //openCropActivity();
                 }
                 break;
             case CHOOSE_FROM_ALBUM:
@@ -263,6 +269,20 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                     Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
         }
         startActivityForResult(intent, SYSTEM_CROP);
+    }
+
+    /**
+     * 测试 CropImageView 的使用
+     */
+    private void openCropActivity() {
+        Intent intent = new Intent();
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.setAction("com.android.camera.action.CROP");
+        intent.setDataAndType(photoURI, "image/*");
+        //cropFile = ImageUtil.createImageFile();
+        //Uri cropUri = FileProvider.getUriForFile(this, "com.hm.camerademo.fileprovider", cropFile);
+        //intent.putExtra(MediaStore.EXTRA_OUTPUT, cropUri);
+        ImageCropActivity.startCrop(this, photoURI);
     }
 
     /**
@@ -386,7 +406,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                     }
                 });
     }
-
 
     private void showToast(String text) {
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
