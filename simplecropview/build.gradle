@@ -9,14 +9,11 @@ dependencies {
 
 android {
   compileSdkVersion 28
-  buildToolsVersion '28.0.2'
 
-  defaultConfig {
+    defaultConfig {
     minSdkVersion 22
     targetSdkVersion 28
-    versionCode 26
-    versionName "1.1.8"
-    consumerProguardFiles 'proguard-rules.pro'
+        consumerProguardFiles 'proguard-rules.pro'
   }
 
   dexOptions {

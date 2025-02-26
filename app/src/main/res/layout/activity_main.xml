@@ -6,89 +6,89 @@
     </data>
 
     <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/activity_main"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="none">
+        android:id="@+id/activity_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none">
 
         <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <ImageView
-                    android:id="@+id/img_preview"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/ic_big_news" />
+                android:id="@+id/img_preview"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_big_news" />
 
             <Button
-                    android:id="@+id/btn_storage_test"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:onClick="onClick"
-                    android:text="文件存储相关测试" />
+                android:id="@+id/btn_storage_test"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="onClick"
+                android:text="文件存储相关测试" />
 
             <Button
-                    android:id="@+id/btn_new_request_permission"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:onClick="onClick"
-                    android:text="测试新的请求权限的方式" />
+                android:id="@+id/btn_new_request_permission"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="onClick"
+                android:text="测试新的请求权限的方式" />
 
             <Button
-                    android:id="@+id/btn_take_photo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:onClick="onClick"
-                    android:text="@string/take_photo" />
+                android:id="@+id/btn_take_photo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="onClick"
+                android:text="@string/take_photo" />
 
             <Button
-                    android:id="@+id/btn_choose_photo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:onClick="onClick"
-                    android:text="@string/choose_from_album" />
+                android:id="@+id/btn_choose_photo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="onClick"
+                android:text="@string/choose_from_album" />
 
             <Button
-                    android:id="@+id/btn_choose_multi_photo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:onClick="onClick"
-                    android:text="@string/customize_picture_picker" />
+                android:id="@+id/btn_choose_multi_photo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="onClick"
+                android:text="@string/customize_picture_picker" />
 
             <Button
-                    android:id="@+id/btn_xiaanming"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:onClick="onClick"
-                    android:text="启动xiaanmingActivity"
-                    android:textAllCaps="false" />
+                android:id="@+id/btn_xiaanming"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="onClick"
+                android:text="启动xiaanmingActivity"
+                android:textAllCaps="false" />
 
             <Button
-                    android:id="@+id/btn_compress"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:onClick="onClick"
-                    android:text="图片压缩质量" />
+                android:id="@+id/btn_compress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="onClick"
+                android:text="图片压缩质量" />
 
             <Button
-                    android:id="@+id/btn_other"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:onClick="onClick"
-                    android:text="参考"
-                    android:textAllCaps="false" />
+                android:id="@+id/btn_other"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="onClick"
+                android:text="参考"
+                android:textAllCaps="false" />
 
 
             <Button
-                    android:id="@+id/btn_test_content_resolver"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:onClick="onClick"
-                    android:text="测试 ContentResolver 查询图片"
-                    android:textAllCaps="false" />
+                android:id="@+id/btn_test_content_resolver"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="onClick"
+                android:text="测试 ContentResolver 查询图片"
+                android:textAllCaps="false" />
 
         </LinearLayout>
 

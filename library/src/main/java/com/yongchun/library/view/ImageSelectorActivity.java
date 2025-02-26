@@ -114,21 +114,21 @@ public class ImageSelectorActivity extends AppCompatActivity {
     public void initView() {
         folderWindow = new FolderWindow(this);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar =  findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.picture);
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.mipmap.ic_back);
 
-        doneText = (TextView) findViewById(R.id.done_text);
+        doneText =  findViewById(R.id.done_text);
         doneText.setVisibility(selectMode == MODE_MULTIPLE ? View.VISIBLE : View.GONE);
 
-        previewText = (TextView) findViewById(R.id.preview_text);
+        previewText =  findViewById(R.id.preview_text);
         previewText.setVisibility(enablePreview ? View.VISIBLE : View.GONE);
 
-        folderLayout = (LinearLayout) findViewById(R.id.folder_layout);
-        folderName = (TextView) findViewById(R.id.folder_name);
+        folderLayout =  findViewById(R.id.folder_layout);
+        folderName =  findViewById(R.id.folder_name);
 
-        recyclerView = (RecyclerView) findViewById(R.id.folder_list);
+        recyclerView =  findViewById(R.id.folder_list);
         recyclerView.setHasFixedSize(true);
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(spanCount, ScreenUtils.dip2px(this, 20), false));
         recyclerView.setLayoutManager(new GridLayoutManager(this, spanCount));

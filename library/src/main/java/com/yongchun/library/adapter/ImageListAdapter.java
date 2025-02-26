@@ -7,12 +7,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
+
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.yongchun.library.R;
 import com.yongchun.library.model.LocalMedia;
 import com.yongchun.library.view.ImageSelectorActivity;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -216,8 +219,8 @@ public class ImageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         public ViewHolder(View itemView) {
             super(itemView);
             contentView = itemView;
-            picture = (ImageView) itemView.findViewById(R.id.picture);
-            check = (ImageView) itemView.findViewById(R.id.check);
+            picture = itemView.findViewById(R.id.picture);
+            check = itemView.findViewById(R.id.check);
         }
 
     }

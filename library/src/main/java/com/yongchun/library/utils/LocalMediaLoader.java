@@ -3,12 +3,15 @@ package com.yongchun.library.utils;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.MediaStore;
+
 import androidx.fragment.app.FragmentActivity;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
+
 import com.yongchun.library.model.LocalMedia;
 import com.yongchun.library.model.LocalMediaFolder;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
@@ -74,7 +77,7 @@ public class LocalMediaLoader {
                 LocalMediaFolder allImageFolder = new LocalMediaFolder();
                 List<LocalMedia> allImages = new ArrayList<LocalMedia>();
 
-                while (data != null && data.moveToNext()) {
+                while (data != null && !data.isClosed() && data.moveToNext()) {
                     // 获取图片的路径
                     String path = data.getString(data
                             .getColumnIndex(MediaStore.Images.Media.DATA));
