@@ -101,13 +101,9 @@ public class ImageSelectorActivity extends AppCompatActivity {
         initView();
         registerListener();
         new LocalMediaLoader(this, LocalMediaLoader.TYPE_IMAGE).loadAllImage(
-                new LocalMediaLoader.LocalMediaLoadListener() {
-
-                    @Override
-                    public void loadComplete(List<LocalMediaFolder> folders) {
-                        folderWindow.bindFolder(folders);
-                        imageAdapter.bindImages(folders.get(0).getImages());
-                    }
+                folders -> {
+                    folderWindow.bindFolder(folders);
+                    imageAdapter.bindImages(folders.get(0).getImages());
                 });
     }
 
@@ -177,13 +173,15 @@ public class ImageSelectorActivity extends AppCompatActivity {
 
             @Override
             public void onPictureClick(LocalMedia media, int position) {
-                if (enablePreview) {
-                    startPreview(imageAdapter.getImages(), position);
-                } else if (enableCrop) {
-                    startCrop(media.getPath());
-                } else {
-                    onSelectDone(media.getPath());
-                }
+//                if (enablePreview) {
+//                    startPreview(imageAdapter.getImages(), position);
+//                } else if (enableCrop) {
+//                    startCrop(media.getPath());
+//                } else {
+//                    onSelectDone(media.getPath());
+//                }
+                startCrop(media.getPath());
+
             }
         });
         doneText.setOnClickListener(new View.OnClickListener() {

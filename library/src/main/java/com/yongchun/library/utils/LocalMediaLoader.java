@@ -53,7 +53,7 @@ public class LocalMediaLoader {
     HashSet<String> mDirPaths = new HashSet<String>();
 
     public void loadAllImage(final LocalMediaLoadListener imageLoadListener) {
-        activity.getSupportLoaderManager().initLoader(type, null, new LoaderManager.LoaderCallbacks<Cursor>() {
+        LoaderManager.getInstance(activity).initLoader(type, null, new LoaderManager.LoaderCallbacks<Cursor>() {
             @Override
             public Loader<Cursor> onCreateLoader(int id, Bundle args) {
                 CursorLoader cursorLoader = null;
@@ -79,8 +79,11 @@ public class LocalMediaLoader {
 
                 while (data != null && !data.isClosed() && data.moveToNext()) {
                     // 获取图片的路径
-                    String path = data.getString(data
-                            .getColumnIndex(MediaStore.Images.Media.DATA));
+                    int columnIndex = data.getColumnIndex(MediaStore.Images.Media.DATA);
+                    if (columnIndex == -1) {
+                        continue;
+                    }
+                    String path = data.getString(columnIndex);
                     File file = new File(path);
                     if (!file.exists()) {
                         continue;
@@ -131,7 +134,9 @@ public class LocalMediaLoader {
 
                 allImageFolder.setImages(allImages);
                 allImageFolder.setImageNum(allImageFolder.getImages().size());
-                allImageFolder.setFirstImagePath(allImages.get(0).getPath());
+                if (!allImages.isEmpty()) {
+                    allImageFolder.setFirstImagePath(allImages.get(0).getPath());
+                }
                 allImageFolder.setName(activity.getString(com.yongchun.library.R.string.all_image));
                 imageFolders.add(allImageFolder);
                 sortFolder(imageFolders);
