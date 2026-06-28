@@ -66,6 +66,17 @@ public class ImageUtil {
                 .into(imageView);
     }
 
+    /**
+     * 直接加载 content:// Uri，通过 ContentResolver 读取，无需存储权限。
+     * 适用于系统图片选择器返回的 Uri（分区存储下不能再用绝对路径）。
+     */
+    public static void load(Context context, Uri uri, ImageView imageView) {
+        Glide.with(context)
+                .load(uri)
+                .apply(options)
+                .into(imageView);
+    }
+
     public static void load(Context context, int resId, ImageView imageView) {
         Glide.with(context)
                 .load(resId)

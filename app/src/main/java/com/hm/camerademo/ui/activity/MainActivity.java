@@ -10,6 +10,7 @@ import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
@@ -144,32 +145,55 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     }
 
     private void requestPermission() {
-        String[] prems = {Manifest.permission.WRITE_EXTERNAL_STORAGE, permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.CAMERA};
-        if (ContextCompat.checkSelfPermission(this, prems[0]) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, prems[1]) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, prems[2]) == PackageManager.PERMISSION_GRANTED
-        ) {
-            Log.d(TAG, "have got permission");
+        // 按系统版本动态构建权限列表：
+        // - WRITE_EXTERNAL_STORAGE 在 Android 11+ 已失效，只在 Android 9 及以下申请；
+        // - READ_EXTERNAL_STORAGE 在 Android 13+ 被 READ_MEDIA_IMAGES 取代。
+        List<String> list = new ArrayList<>();
+        list.add(Manifest.permission.CAMERA);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+
+            list.add(Manifest.permission.READ_MEDIA_IMAGES);
         } else {
-            ActivityResultLauncher<String[]> requestPermissionLauncher = getActivityResultRegistry().register(
-                    "activity_rq_multi_permission",
-                    new ActivityResultContracts.RequestMultiplePermissions(), result -> {
-                        if (result == null) {
-                            showToast("权限申请失败");
-                            return;
-                        }
-                        if (Boolean.TRUE.equals(result.get(android.Manifest.permission.CAMERA)) && Boolean.TRUE.equals(
-                                result.get(
-                                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE))) {
-                            showToast("权限申请成功");
-                        } else {
-                            showSettingDialog("权限申请失败，部分权限未通过，请手动设置");
-                        }
-                    });
-
-            requestPermissionLauncher.launch(prems);
+            list.add(permission.READ_EXTERNAL_STORAGE);
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {    // Android 9 及以下，WRITE 才有意义
+                list.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            }
         }
+        final String[] prems = list.toArray(new String[0]);
+
+        boolean allGranted = true;
+        for (String p : prems) {
+            if (ContextCompat.checkSelfPermission(this, p) != PackageManager.PERMISSION_GRANTED) {
+                allGranted = false;
+                break;
+            }
+        }
+        if (allGranted) {
+            Log.d(TAG, "have got permission");
+            return;
+        }
+
+        ActivityResultLauncher<String[]> requestPermissionLauncher = getActivityResultRegistry().register(
+                "activity_rq_multi_permission",
+                new ActivityResultContracts.RequestMultiplePermissions(), result -> {
+                    if (result == null) {
+                        showSettingDialog("权限申请失败，部分权限未通过，请手动设置");
+                        return;
+                    }
+                    boolean ok = true;
+                    for (String p : prems) {
+                        if (!Boolean.TRUE.equals(result.get(p))) {
+                            ok = false;
+                            break;
+                        }
+                    }
+                    if (ok) {
+                        showToast("权限申请成功");
+                    } else {
+                        showSettingDialog("权限申请失败，部分权限未通过，请手动设置");
+                    }
+                });
+
+        requestPermissionLauncher.launch(prems);
     }
 
     private void showSettingDialog(String tips) {
@@ -217,21 +241,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                 }
                 break;
             case CHOOSE_FROM_ALBUM:
-                if (resultCode == RESULT_OK) {
-                    //Unable to decode stream: java.io.FileNotFoundException: /storage/emulated/0/DCIM/camerademo/20231010-16:43:044541434019456215797.jpg: open failed: EACCES (Permission denied)
-                    String imgPath;
-                    if (data.getData().toString().startsWith("content")) {//content://media/external/images/media/1795
-                        String[] proj = {MediaStore.Images.Media.DATA};
-                        Cursor cursor = getContentResolver().query(data.getData(), proj, null, null, null);
-                        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                        cursor.moveToFirst();
-                        //storage/emulated/0/baidu/searchbox/downloads/af1a-kcieyvz6748456.jpg
-                        imgPath = cursor.getString(column_index);
-                        cursor.close();
-                    } else {
-                        imgPath = data.getData().getPath();
-                    }
-                    processChoosePicture(imgPath);
+                // 分区存储下不要再把 content:// 转成绝对路径（会 EACCES），
+                // 直接使用系统选择器返回的 Uri，通过 ContentResolver 读取。
+                if (resultCode == RESULT_OK && data != null && data.getData() != null) {
+                    processChoosePicture(data.getData());
                 }
                 break;
             case REQUEST_TAKE_PHOTO_PERMISSION:
@@ -328,14 +341,14 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
      *
      * @param picturePath
      */
-    private void processChoosePicture(final String picturePath) {
-        ImageUtil.load(MainActivity.this, picturePath, viewBind.imgPreview);
-        Observable.just(picturePath)
-                .map(new Func1<String, Bitmap>() {
+    private void processChoosePicture(final Uri pictureUri) {
+        ImageUtil.load(MainActivity.this, pictureUri, viewBind.imgPreview);
+        Observable.just(pictureUri)
+                .map(new Func1<Uri, Bitmap>() {
                     @Override
-                    public Bitmap call(String s) {
+                    public Bitmap call(Uri uri) {
                         try {
-                            return ImageUtil.getBitmapFromPath(picturePath);
+                            return ImageUtil.getBitmapFormUri(MainActivity.this, uri);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
